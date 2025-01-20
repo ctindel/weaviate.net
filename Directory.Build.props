@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Authors>Weaviate</Authors>
+    <Copyright>Weaviate</Copyright>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/weaviate/weaviate-dotnet-client</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/weaviate/weaviate-dotnet-client</PackageProjectUrl>
+    <PackageReleaseNotes>https://github.com/weaviate/weaviate-dotnet-client/releases</PackageReleaseNotes>
+  </PropertyGroup>
+  <PropertyGroup>
+  
+    <SolutionRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), build.bat))</SolutionRoot>
+	
+    <MinVerDefaultPreReleaseIdentifiers>preview.0</MinVerDefaultPreReleaseIdentifiers>
+    <MinVerMinimumMajorMinor>0.1</MinVerMinimumMajorMinor>
+
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>NU1903</WarningsNotAsErrors>
+    <IsPackable>False</IsPackable>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    
+    <SignAssembly>false</SignAssembly>
+    
+    <TargetFramework>net8.0</TargetFramework>
+    
+    <DefineConstants>$(DefineConstants);DOTNETCORE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MinVer" Version="4.3.0" PrivateAssets="all"/>
+    <PackageReference Include="Flurl" Version="4.0.0" />
+    <PackageReference Include="Flurl.Http" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="System.Security.Permissions" Version="8.0.0" />
+  </ItemGroup>
+</Project>

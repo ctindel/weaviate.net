@@ -1,0 +1,12 @@
+/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/bin/Debug/net8.0/Weaviate.Client.deps.json
+/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/bin/Debug/net8.0/Weaviate.Client.dll
+/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/bin/Debug/net8.0/Weaviate.Client.pdb
+/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/obj/Debug/net8.0/Weaviate.Client.csproj.AssemblyReference.cache
+/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/obj/Debug/net8.0/Weaviate.Client.GeneratedMSBuildEditorConfig.editorconfig
+/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/obj/Debug/net8.0/Weaviate.Client.AssemblyInfoInputs.cache
+/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/obj/Debug/net8.0/Weaviate.Client.AssemblyInfo.cs
+/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/obj/Debug/net8.0/Weaviate.Client.csproj.CoreCompileInputs.cache
+/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/obj/Debug/net8.0/Weaviate.Client.dll
+/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/obj/Debug/net8.0/refint/Weaviate.Client.dll
+/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/obj/Debug/net8.0/Weaviate.Client.pdb
+/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/obj/Debug/net8.0/ref/Weaviate.Client.dll

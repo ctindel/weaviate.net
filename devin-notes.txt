@@ -1,0 +1,87 @@
+Environment Setup Instructions for Weaviate .NET Client Development
+
+1. .NET 8 SDK Setup
+------------------
+- Install .NET 8 SDK:
+```bash
+wget https://dot.net/v1/dotnet-install.sh
+chmod +x dotnet-install.sh
+./dotnet-install.sh --channel 8.0
+```
+- Add to PATH:
+```bash
+export DOTNET_ROOT=$HOME/.dotnet
+export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools
+```
+
+2. Weaviate Setup
+----------------
+- Install Docker and Docker Compose
+- Create docker-compose.yml with Weaviate configuration:
+```yaml
+version: '3.4'
+services:
+  weaviate:
+    image: semitechnologies/weaviate:1.28.2
+    ports:
+      - "8080:8080"
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: 'text2vec-ollama'
+      ENABLE_MODULES: 'text2vec-ollama,generative-ollama'
+      CLUSTER_HOSTNAME: 'node1'
+    volumes:
+      - weaviate_data:/var/lib/weaviate
+volumes:
+  weaviate_data:
+```
+- Start Weaviate:
+```bash
+docker-compose up -d
+```
+
+3. Ollama Setup
+--------------
+- Install Ollama:
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+- Start Ollama service:
+```bash
+systemctl start ollama
+```
+- Pull and serve the mxbai-embed-large model:
+```bash
+ollama pull mxbai-embed-large
+```
+- Verify Ollama is running:
+```bash
+curl http://localhost:11434/api/embeddings -d '{
+  "model": "mxbai-embed-large",
+  "prompt": "Hello, world"
+}'
+```
+
+4. Project Setup
+---------------
+- Clone the repository:
+```bash
+git clone https://github.com/ctindel/weaviate.net.git
+cd weaviate.net
+```
+- Restore dependencies:
+```bash
+dotnet restore
+```
+- Build the project:
+```bash
+dotnet build
+```
+- Run tests:
+```bash
+dotnet test
+```
+
+Note: The integration tests expect Weaviate to be running on localhost:8080 and Ollama on localhost:11434 with the mxbai-embed-large model available.

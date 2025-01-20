@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{000E6AF7-1271-44BE-BCBA-FF78DC9A9C8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weaviate.Client", "src\Weaviate.Client\Weaviate.Client.csproj", "{D0632CD7-1208-4C98-8719-AFEEB72CEB0E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{44DDFD58-4277-4E54-A09C-5B3B1168104C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weaviate.Client.Tests", "tests\Weaviate.Client.Tests\Weaviate.Client.Tests.csproj", "{9218F07F-6849-40B0-B441-D6307B047742}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests-integration", "tests-integration", "{98B01D62-CC0B-4C13-934C-FD43A7E97B17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weaviate.Client.IntegrationTests", "tests-integration\Weaviate.Client.IntegrationTests\Weaviate.Client.IntegrationTests.csproj", "{F805E789-925A-4B17-9AF7-1771A6278F31}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D0632CD7-1208-4C98-8719-AFEEB72CEB0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0632CD7-1208-4C98-8719-AFEEB72CEB0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0632CD7-1208-4C98-8719-AFEEB72CEB0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0632CD7-1208-4C98-8719-AFEEB72CEB0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9218F07F-6849-40B0-B441-D6307B047742}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9218F07F-6849-40B0-B441-D6307B047742}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9218F07F-6849-40B0-B441-D6307B047742}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9218F07F-6849-40B0-B441-D6307B047742}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F805E789-925A-4B17-9AF7-1771A6278F31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F805E789-925A-4B17-9AF7-1771A6278F31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F805E789-925A-4B17-9AF7-1771A6278F31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F805E789-925A-4B17-9AF7-1771A6278F31}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D0632CD7-1208-4C98-8719-AFEEB72CEB0E} = {000E6AF7-1271-44BE-BCBA-FF78DC9A9C8E}
+		{9218F07F-6849-40B0-B441-D6307B047742} = {44DDFD58-4277-4E54-A09C-5B3B1168104C}
+		{F805E789-925A-4B17-9AF7-1771A6278F31} = {98B01D62-CC0B-4C13-934C-FD43A7E97B17}
+	EndGlobalSection
+EndGlobal

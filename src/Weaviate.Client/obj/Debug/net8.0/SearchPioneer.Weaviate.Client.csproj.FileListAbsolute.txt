@@ -1,0 +1,12 @@
+/home/ubuntu/repos/weaviate-dotnet-client/src/SearchPioneer.Weaviate.Client/bin/Debug/net8.0/SearchPioneer.Weaviate.Client.deps.json
+/home/ubuntu/repos/weaviate-dotnet-client/src/SearchPioneer.Weaviate.Client/bin/Debug/net8.0/SearchPioneer.Weaviate.Client.dll
+/home/ubuntu/repos/weaviate-dotnet-client/src/SearchPioneer.Weaviate.Client/bin/Debug/net8.0/SearchPioneer.Weaviate.Client.pdb
+/home/ubuntu/repos/weaviate-dotnet-client/src/SearchPioneer.Weaviate.Client/obj/Debug/net8.0/SearchPioneer.Weaviate.Client.csproj.AssemblyReference.cache
+/home/ubuntu/repos/weaviate-dotnet-client/src/SearchPioneer.Weaviate.Client/obj/Debug/net8.0/SearchPioneer.Weaviate.Client.GeneratedMSBuildEditorConfig.editorconfig
+/home/ubuntu/repos/weaviate-dotnet-client/src/SearchPioneer.Weaviate.Client/obj/Debug/net8.0/SearchPioneer.Weaviate.Client.AssemblyInfoInputs.cache
+/home/ubuntu/repos/weaviate-dotnet-client/src/SearchPioneer.Weaviate.Client/obj/Debug/net8.0/SearchPioneer.Weaviate.Client.AssemblyInfo.cs
+/home/ubuntu/repos/weaviate-dotnet-client/src/SearchPioneer.Weaviate.Client/obj/Debug/net8.0/SearchPioneer.Weaviate.Client.csproj.CoreCompileInputs.cache
+/home/ubuntu/repos/weaviate-dotnet-client/src/SearchPioneer.Weaviate.Client/obj/Debug/net8.0/SearchPioneer.Weaviate.Client.dll
+/home/ubuntu/repos/weaviate-dotnet-client/src/SearchPioneer.Weaviate.Client/obj/Debug/net8.0/refint/SearchPioneer.Weaviate.Client.dll
+/home/ubuntu/repos/weaviate-dotnet-client/src/SearchPioneer.Weaviate.Client/obj/Debug/net8.0/SearchPioneer.Weaviate.Client.pdb
+/home/ubuntu/repos/weaviate-dotnet-client/src/SearchPioneer.Weaviate.Client/obj/Debug/net8.0/ref/SearchPioneer.Weaviate.Client.dll
