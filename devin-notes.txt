@@ -42,6 +42,13 @@ volumes:
 docker-compose up -d
 ```
 
+Note: For running integration tests, use the docker-compose.yml file in the tests-integration directory:
+```bash
+cd tests-integration
+docker-compose up -d
+```
+This configuration includes the necessary text2vec-ollama module and proper networking setup for test execution.
+
 3. Ollama Setup
 --------------
 - Install Ollama:
