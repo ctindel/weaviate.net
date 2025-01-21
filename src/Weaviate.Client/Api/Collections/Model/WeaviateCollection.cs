@@ -88,12 +88,12 @@ public class WeaviateCollection
         {
             if (value != null && !string.IsNullOrEmpty(Vectorizer))
             {
-                var config = new Dictionary<string, object>
-                {
-                    ["skip"] = false,
-                    ["vectorizePropertyName"] = true,
-                    ["vectorizeClassName"] = true
-                };
+                var config = new Dictionary<string, object>();
+                
+                // Use incoming skip value or default to false
+                config["skip"] = value.TryGetValue("skip", out var skipValue) ? skipValue : false;
+                config["vectorizePropertyName"] = value.TryGetValue("vectorizePropertyName", out var vpnValue) ? vpnValue : true;
+                config["vectorizeClassName"] = value.TryGetValue("vectorizeClassName", out var vcnValue) ? vcnValue : true;
 
                 // Copy over model and apiEndpoint if provided
                 if (value.TryGetValue("model", out var model))

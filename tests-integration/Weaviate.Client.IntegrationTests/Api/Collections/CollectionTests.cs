@@ -99,11 +99,23 @@ public class CollectionTests : TestBase
 							DataType = new[] { DataType.Text },
 							IndexFilterable = true,
 							IndexSearchable = false,
+							SkipVectorization = true,
 							ModuleConfig = new Dictionary<string, Dictionary<string, object>>
 							{
 								["text2vec-ollama"] = new Dictionary<string, object>
 								{
-									{ "skip", false },
+									{ "skip", true },
+									{ "vectorizePropertyName", true },
+									{ "vectorizeClassName", false }
+								}
+							},
+							VectorizerConfig = new PropertyVectorizerConfig
+							{
+								Vectorizer = Vectorizer.Text2VecOllama.ToString(),
+								SkipVectorization = true,
+								VectorizerOptions = new Dictionary<string, object>
+								{
+									{ "skip", true },
 									{ "vectorizePropertyName", true }
 								}
 							}
@@ -148,7 +160,6 @@ public class CollectionTests : TestBase
 		Assert.NotNull(instrumentProperty.VectorizerConfig);
 		Assert.Equal(Vectorizer.Text2VecOllama.ToString(), instrumentProperty.VectorizerConfig.Vectorizer);
 		Assert.True(instrumentProperty.VectorizerConfig.SkipVectorization);
-
 		Assert.NotNull(instrumentProperty.VectorIndexConfig);
 		Assert.Equal(VectorDistance.Cosine.ToString(), instrumentProperty.VectorIndexConfig.Distance);
 		Assert.Equal(64, instrumentProperty.VectorIndexConfig.MaxConnections);
