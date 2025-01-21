@@ -10,11 +10,26 @@ public class Transport : IDisposable
 {
     private readonly HttpClient _client;
     private readonly string _baseUrl;
+    public bool DebugLoggingEnabled { get; set; }
 
     public Transport(string baseUrl, HttpClient? client = null)
     {
         _baseUrl = baseUrl;
         _client = client ?? new HttpClient();
+        DebugLoggingEnabled = false;
+    }
+
+    private static void LogDebug(Transport transport, string message)
+    {
+        if (transport.DebugLoggingEnabled)
+        {
+            Console.WriteLine($"[DEBUG] {message}");
+        }
+    }
+
+    private void LogDebug(string message)
+    {
+        LogDebug(this, message);
     }
 
     public void Dispose()
@@ -44,21 +59,21 @@ public class Transport : IDisposable
                 url += $"?{queryParams}";
             }
 
-            Console.WriteLine($"Making request to: {url}"); // Debug logging
+            LogDebug($"Making GET request to: {url}");
             var response = await _client.GetAsync(url, cancellationToken);
-            Console.WriteLine($"Response status code: {response.StatusCode}"); // Debug logging
+            LogDebug($"Response status code: {response.StatusCode}");
             
             if (response.Content.Headers.ContentLength > 0)
             {
                 var content = await response.Content.ReadAsStringAsync(cancellationToken);
-                Console.WriteLine($"Response content: {content}"); // Debug logging
+                LogDebug($"Response content: {content}");
             }
             
-            return await CreateApiResponseAsync<T>(response);
+            return await CreateApiResponseAsync<T>(this, response);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Request failed with error: {ex}"); // Debug logging
+            LogDebug($"Request failed with error: {ex}");
             return new ApiResponse<T>
             {
                 Error = new ErrorResponse 
@@ -82,21 +97,23 @@ public class Transport : IDisposable
             var cleanPath = path.TrimStart('/');
             var url = $"{baseUrl}/{cleanPath}";
             
-            Console.WriteLine($"Making POST request to: {url}"); // Debug logging
+            LogDebug($"Making POST request to: {url}");
+            var requestJson = System.Text.Json.JsonSerializer.Serialize(request);
+            LogDebug($"Request content: {requestJson}");
             var response = await _client.PostAsJsonAsync(url, request, cancellationToken);
-            Console.WriteLine($"Response status code: {response.StatusCode}"); // Debug logging
+            LogDebug($"Response status code: {response.StatusCode}");
             
             if (response.Content.Headers.ContentLength > 0)
             {
                 var content = await response.Content.ReadAsStringAsync(cancellationToken);
-                Console.WriteLine($"Response content: {content}"); // Debug logging
+                LogDebug($"Response content: {content}");
             }
             
-            return await CreateApiResponseAsync<TResponse>(response);
+            return await CreateApiResponseAsync<TResponse>(this, response);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"POST request failed with error: {ex}"); // Debug logging
+            LogDebug($"POST request failed with error: {ex}");
             return new ApiResponse<TResponse>
             {
                 Error = new ErrorResponse 
@@ -115,21 +132,23 @@ public class Transport : IDisposable
             var cleanPath = path.TrimStart('/');
             var url = $"{baseUrl}/{cleanPath}";
             
-            Console.WriteLine($"Making PUT request to: {url}"); // Debug logging
+            LogDebug($"Making PUT request to: {url}");
+            var requestJson = System.Text.Json.JsonSerializer.Serialize(request);
+            LogDebug($"Request content: {requestJson}");
             var response = await _client.PutAsJsonAsync(url, request, cancellationToken);
-            Console.WriteLine($"Response status code: {response.StatusCode}"); // Debug logging
+            LogDebug($"Response status code: {response.StatusCode}");
             
             if (response.Content.Headers.ContentLength > 0)
             {
                 var content = await response.Content.ReadAsStringAsync(cancellationToken);
-                Console.WriteLine($"Response content: {content}"); // Debug logging
+                LogDebug($"Response content: {content}");
             }
             
-            return await CreateApiResponseAsync<TResponse>(response);
+            return await CreateApiResponseAsync<TResponse>(this, response);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"PUT request failed with error: {ex}"); // Debug logging
+            LogDebug($"PUT request failed with error: {ex}");
             return new ApiResponse<TResponse>
             {
                 Error = new ErrorResponse 
@@ -148,21 +167,21 @@ public class Transport : IDisposable
             var cleanPath = path.TrimStart('/');
             var url = $"{baseUrl}/{cleanPath}";
             
-            Console.WriteLine($"Making DELETE request to: {url}"); // Debug logging
+            LogDebug($"Making DELETE request to: {url}");
             var response = await _client.DeleteAsync(url, cancellationToken);
-            Console.WriteLine($"Response status code: {response.StatusCode}"); // Debug logging
+            LogDebug($"Response status code: {response.StatusCode}");
             
             if (response.Content.Headers.ContentLength > 0)
             {
                 var content = await response.Content.ReadAsStringAsync(cancellationToken);
-                Console.WriteLine($"Response content: {content}"); // Debug logging
+                LogDebug($"Response content: {content}");
             }
             
-            return await CreateApiResponseAsync<T>(response);
+            return await CreateApiResponseAsync<T>(this, response);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"DELETE request failed with error: {ex}"); // Debug logging
+            LogDebug($"DELETE request failed with error: {ex}");
             return new ApiResponse<T>
             {
                 Error = new ErrorResponse 
@@ -192,29 +211,29 @@ public class Transport : IDisposable
                 url += $"?{queryString}";
             }
 
-            Console.WriteLine($"Making {method} request to: {url}"); // Debug logging
+            LogDebug($"Making {method} request to: {url}");
             using var httpRequest = new HttpRequestMessage(method, url);
             if (content != null)
             {
                 httpRequest.Content = JsonContent.Create(content);
                 var contentString = await httpRequest.Content.ReadAsStringAsync(cancellationToken);
-                Console.WriteLine($"Request content: {contentString}"); // Debug logging
+                LogDebug($"Request content: {contentString}");
             }
 
             var httpResponse = await _client.SendAsync(httpRequest, cancellationToken);
-            Console.WriteLine($"Response status code: {httpResponse.StatusCode}"); // Debug logging
+            LogDebug($"Response status code: {httpResponse.StatusCode}");
             
             if (httpResponse.Content.Headers.ContentLength > 0)
             {
                 var responseContent = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-                Console.WriteLine($"Response content: {responseContent}"); // Debug logging
+                LogDebug($"Response content: {responseContent}");
             }
             
-            return await CreateApiResponseAsync<T>(httpResponse);
+            return await CreateApiResponseAsync<T>(this, httpResponse);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"{method} request failed with error: {ex}"); // Debug logging
+            LogDebug($"{method} request failed with error: {ex}");
             return new ApiResponse<T>
             {
                 Error = new ErrorResponse 
@@ -225,7 +244,7 @@ public class Transport : IDisposable
         }
     }
 
-    private static async Task<ApiResponse<T>> CreateApiResponseAsync<T>(HttpResponseMessage response)
+    private static async Task<ApiResponse<T>> CreateApiResponseAsync<T>(Transport transport, HttpResponseMessage response)
     {
         var apiResponse = new ApiResponse<T>
         {
@@ -236,8 +255,8 @@ public class Transport : IDisposable
         try
         {
             var content = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Response Status: {response.StatusCode}"); // Debug logging
-            Console.WriteLine($"Response Content: {content}"); // Debug logging
+            LogDebug(transport, $"Response Status: {response.StatusCode}");
+            LogDebug(transport, $"Response Content: {content}");
             
             if (response.IsSuccessStatusCode)
             {
@@ -252,9 +271,35 @@ public class Transport : IDisposable
                     
                     if (!string.IsNullOrEmpty(content))
                     {
-                        Console.WriteLine($"Attempting to deserialize content: {content}"); // Debug logging
-                        apiResponse.Result = System.Text.Json.JsonSerializer.Deserialize<T>(content, options);
-                        Console.WriteLine($"Deserialized Result: {apiResponse.Result}"); // Debug logging
+                        LogDebug(transport, $"Attempting to deserialize content: {content}");
+                        if (typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition() == typeof(BatchResponse<>))
+                        {
+                            var elementType = typeof(T).GetGenericArguments()[0];
+                            var arrayType = elementType.MakeArrayType();
+                            var array = System.Text.Json.JsonSerializer.Deserialize(content, arrayType, options);
+                            if (array != null)
+                            {
+                                var fromObjectArrayMethod = typeof(T).GetMethod("FromObjectArray");
+                                if (fromObjectArrayMethod != null)
+                                {
+                                    var parameters = fromObjectArrayMethod.GetParameters();
+                                    if (parameters.Length == 1)
+                                    {
+                                        var parameterType = parameters[0].ParameterType;
+                                        if (parameterType.IsAssignableFrom(arrayType))
+                                        {
+                                            var args = new object[] { array };
+                                            apiResponse.Result = (T)fromObjectArrayMethod.Invoke(null, args)!;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            apiResponse.Result = System.Text.Json.JsonSerializer.Deserialize<T>(content, options);
+                        }
+                        LogDebug(transport, $"Deserialized Result: {apiResponse.Result}");
                     }
                     else if (typeof(T) == typeof(object))
                     {
@@ -264,7 +309,7 @@ public class Transport : IDisposable
                 }
                 catch (System.Text.Json.JsonException jsonEx)
                 {
-                    Console.WriteLine($"JSON Deserialization Error: {jsonEx}"); // Debug logging
+                    LogDebug(transport, $"JSON Deserialization Error: {jsonEx}");
                     apiResponse.Error = new ErrorResponse 
                     { 
                         Error = new[] { new Error { Message = $"Failed to deserialize response: {jsonEx.Message}" } }
@@ -292,7 +337,7 @@ public class Transport : IDisposable
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error processing response: {ex}"); // Debug logging
+            LogDebug(transport, $"Error processing response: {ex}");
             apiResponse.Error = new ErrorResponse 
             { 
                 Error = new[] { new Error { Message = $"Error processing response: {ex.Message}" } }

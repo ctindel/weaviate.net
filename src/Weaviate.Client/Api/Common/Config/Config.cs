@@ -11,10 +11,12 @@ public class Config
     public string? Password { get; set; }
     public string? AccessToken { get; set; }
     public string? AdditionalHeaders { get; set; }
+    public bool DebugLoggingEnabled { get; set; }
 
     public Config(string scheme, string host)
     {
         Scheme = scheme;
         Host = host;
+        DebugLoggingEnabled = false;  // Disabled by default
     }
 }

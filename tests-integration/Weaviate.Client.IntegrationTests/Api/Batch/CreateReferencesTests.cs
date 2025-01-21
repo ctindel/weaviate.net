@@ -24,7 +24,7 @@ public class CreateReferencesTests : TestBase
 	[Fact]
 	public void References()
 	{
-		CreateWeaviateTestSchemaFoodWithReferenceProperty(Client);
+		CreateWeaviateTestCollectionsFoodWithReferenceProperty(Client);
 
 		var id1 = "97fa5147-bdad-4d74-9a81-f8babc811b09";
 		var id2 = "07473b34-0ab2-4120-882d-303d9e13f7af";

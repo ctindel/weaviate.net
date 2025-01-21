@@ -23,7 +23,7 @@ public class CheckTests : TestBase
 	[Fact]
 	public void Check()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var nonExistent = Client.Data.Check(new("11111111-1111-1111-aaaa-aaaaaaaaaaaa", COLLECTION_NAME_PIZZA));
 		Assert.Equal(HttpStatusCode.NotFound, nonExistent.HttpStatusCode);
@@ -34,7 +34,7 @@ public class CheckTests : TestBase
 		var soup = Client.Data.Check(new(SOUP_CHICKENSOUP_ID, COLLECTION_NAME_SOUP));
 		Assert.Equal(HttpStatusCode.NoContent, soup.HttpStatusCode);
 
-		Client.Schema.DeleteAllCollections();
+		Client.Collections.DeleteAllCollections();
 
 		var pizzaNone = Client.Data.Check(new(PIZZA_HAWAII_ID, COLLECTION_NAME_PIZZA));
 		Assert.Equal(HttpStatusCode.NotFound, pizzaNone.HttpStatusCode);

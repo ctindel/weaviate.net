@@ -24,7 +24,7 @@ public class DeleteTests : TestBase
 	[Fact]
 	public void DeleteDryRunVerbose()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var getAllResponse = Client.Data.GetAll();
 		Assert.Equal(HttpStatusCode.OK, getAllResponse.HttpStatusCode);
@@ -67,7 +67,7 @@ public class DeleteTests : TestBase
 	[Fact]
 	public void DeleteDryRunMinmal()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var getAllResponse = Client.Data.GetAll();
 		Assert.Equal(HttpStatusCode.OK, getAllResponse.HttpStatusCode);
@@ -105,7 +105,7 @@ public class DeleteTests : TestBase
 	[Fact]
 	public void DeleteNoMatchWithDefaultOutputAndDryRun()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var getAllResponse = Client.Data.GetAll();
 		Assert.Equal(HttpStatusCode.OK, getAllResponse.HttpStatusCode);
@@ -146,7 +146,7 @@ public class DeleteTests : TestBase
 	[Fact]
 	public void DeleteNoMatchWithVerboseOutput()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var getAllResponse = Client.Data.GetAll();
 		Assert.Equal(HttpStatusCode.OK, getAllResponse.HttpStatusCode);

@@ -24,7 +24,7 @@ public class CreateReferencesTests : TestBase
 	[Fact]
 	public void CreateWithReferenceCreate()
 	{
-		CreateWeaviateTestSchemaFoodWithReferenceProperty(Client);
+		CreateWeaviateTestCollectionsFoodWithReferenceProperty(Client);
 
 		var pizzaId = "abefd256-8574-442b-9293-9205193737ee";
 		var soupId = "565da3b6-60b3-40e5-ba21-e6bfe5dbba91";
@@ -35,7 +35,7 @@ public class CreateReferencesTests : TestBase
 	[Fact]
 	public void CreateWithReferenceReplace()
 	{
-		CreateWeaviateTestSchemaFoodWithReferenceProperty(Client);
+		CreateWeaviateTestCollectionsFoodWithReferenceProperty(Client);
 
 		var pizzaId = "abefd256-8574-442b-9293-9205193737ee";
 		var soupId = "565da3b6-60b3-40e5-ba21-e6bfe5dbba91";
@@ -76,7 +76,7 @@ public class CreateReferencesTests : TestBase
 	[Fact]
 	public void CreateWithReferenceDelete()
 	{
-		CreateWeaviateTestSchemaFoodWithReferenceProperty(Client);
+		CreateWeaviateTestCollectionsFoodWithReferenceProperty(Client);
 
 		var pizzaId = "abefd256-8574-442b-9293-9205193737ee";
 		var soupId = "565da3b6-60b3-40e5-ba21-e6bfe5dbba91";
@@ -119,7 +119,7 @@ public class CreateReferencesTests : TestBase
 	[Fact]
 	public void CreateWithAddReferenceUsingProperties()
 	{
-		CreateWeaviateTestSchemaFoodWithReferenceProperty(Client);
+		CreateWeaviateTestCollectionsFoodWithReferenceProperty(Client);
 
 		var pizzaId = "abefd256-8574-442b-9293-9205193737ee";
 		var beaconId = "565da3b6-60b3-40e5-ba21-e6bfe5dbba92";

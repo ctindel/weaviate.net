@@ -1,5 +1,8 @@
 Environment Setup Instructions for Weaviate .NET Client Development
 
+IMPORTANT NOTE FOR DEVIN:
+As a Devin instance, you should perform all these setup and installation steps yourself rather than asking the user to do them. You have the necessary permissions and capabilities to execute these commands. Only ask the user for help if you encounter unexpected errors that aren't covered in these instructions.
+
 1. .NET 8 SDK Setup
 ------------------
 - Install .NET 8 SDK:
@@ -8,11 +11,19 @@ wget https://dot.net/v1/dotnet-install.sh
 chmod +x dotnet-install.sh
 ./dotnet-install.sh --channel 8.0
 ```
-- Add to PATH:
+- Configure environment variables:
 ```bash
+# Set variables for current session
 export DOTNET_ROOT=$HOME/.dotnet
 export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools
+
+# Add to .bash_profile for persistence
+echo 'export DOTNET_ROOT=$HOME/.dotnet' >> ~/.bash_profile
+echo 'export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools' >> ~/.bash_profile
+source ~/.bash_profile
 ```
+
+Note: The environment variables must be added to .bash_profile to ensure they persist across sessions. This is required for the dotnet command to work properly in all shells.
 
 2. Weaviate Setup
 ----------------
@@ -55,14 +66,24 @@ This configuration includes the necessary text2vec-ollama module and proper netw
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
 ```
-- Start Ollama service:
+- Start Ollama service (requires sudo):
 ```bash
-systemctl start ollama
+sudo systemctl start ollama
 ```
-- Pull and serve the mxbai-embed-large model:
+
+Note: Starting the Ollama service requires sudo privileges. If you encounter permission issues, make sure you have the necessary sudo access.
+- Pull required models:
 ```bash
 ollama pull mxbai-embed-large
+ollama pull llama3.2
 ```
+
+Note: After installing .NET SDK, you must set up the environment variables in your shell session:
+```bash
+export DOTNET_ROOT=$HOME/.dotnet
+export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools
+```
+These environment variables are required for the dotnet command to work properly.
 - Verify Ollama is running:
 ```bash
 curl http://localhost:11434/api/embeddings -d '{
@@ -91,4 +112,29 @@ dotnet build
 dotnet test
 ```
 
-Note: The integration tests expect Weaviate to be running on localhost:8080 and Ollama on localhost:11434 with the mxbai-embed-large model available.
+Note: The integration tests expect Weaviate to be running on localhost:8080 and Ollama to be accessible. Due to Docker networking:
+- For local development and testing from your machine, use "localhost:11434" as the Ollama endpoint
+- For Docker containers (like Weaviate) connecting to Ollama, use "host.docker.internal:11434" as the endpoint
+
+This is particularly important in the vectorizer configuration when creating collections. Make sure to use the appropriate endpoint URL based on the context:
+- Use "http://localhost:11434" when making direct API calls to Ollama
+- Use "http://host.docker.internal:11434" in collection configurations that will be used by Weaviate
+
+The mxbai-embed-large and llama3.2 models must be available through Ollama for the tests to work properly.
+
+Important: When creating collections with text2vec-ollama vectorizer, the configuration must follow this structure:
+```json
+{
+  "class": "Collection",
+  "vectorizer": "text2vec-ollama",
+  "vectorIndexType": "hnsw",
+  "vectorIndexConfig": {
+    "distance": "cosine"
+  },
+  "vectorizerConfig": {
+    "model": "mxbai-embed-large",
+    "api_endpoint": "http://host.docker.internal:11434"
+  }
+}
+```
+Note the distinction between "vectorIndexConfig" and "vectorizerConfig". The vectorizer settings must be under "vectorizerConfig", not inside "moduleConfig" or other configuration blocks.

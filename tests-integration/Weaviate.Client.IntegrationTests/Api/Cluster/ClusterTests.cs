@@ -25,18 +25,18 @@ public class ClusterTests : TestBase
 	[Fact]
 	public void NodeStatusWithoutData()
 	{
-		Client.Schema.DeleteAllCollections();
+		Client.Collections.DeleteAllCollections();
 		var nodeStatus = Client.Cluster.NodeStatus();
 		Assert.Equal(HttpStatusCode.OK, nodeStatus.HttpStatusCode);
 		Assert.NotNull(nodeStatus.Result);
-		
+
 		var result = nodeStatus.Result;
 		Assert.NotNull(result);
 		Assert.NotNull(result.Version);
 		Assert.NotNull(result.Status);
 		Assert.Equal(ExpectedVersion, result.Version ?? string.Empty);
 		Assert.Equal("HEALTHY", result.Status ?? string.Empty);
-		
+
 		// Stats and Shards may be null in newer API versions
 		if (result.Shards != null)
 		{
@@ -50,7 +50,7 @@ public class ClusterTests : TestBase
 	[Fact]
 	public void NodeStatusWithData()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 		var nodeStatus = Client.Cluster.NodeStatus();
 		Assert.Equal(HttpStatusCode.OK, nodeStatus.HttpStatusCode);
 		Assert.NotNull(nodeStatus.Result);

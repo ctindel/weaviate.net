@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Weaviate.Client
-build_property.ProjectDir = /home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/
+build_property.ProjectDir = /home/ubuntu/weaviate-repos/weaviate.net/src/Weaviate.Client/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

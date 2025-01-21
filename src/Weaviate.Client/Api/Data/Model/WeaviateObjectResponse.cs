@@ -20,4 +20,11 @@ public class WeaviateObjectResponse : WeaviateObject
     public string? Status { get; set; }
     public string[]? Errors { get; set; }
     public string? Message { get; set; }  // Added for error handling
+    public ObjectResult? Result { get; set; }
+}
+
+public class ObjectResult
+{
+    public string? Status { get; set; }
+    public ErrorResponse? Errors { get; set; }
 }

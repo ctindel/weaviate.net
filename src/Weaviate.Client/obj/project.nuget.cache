@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ftJW44DnNCU=",
+  "dgSpecHash": "A1AahY0GziQ=",
   "success": true,
-  "projectFilePath": "/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/Weaviate.Client.csproj",
+  "projectFilePath": "/home/ubuntu/weaviate-repos/weaviate.net/src/Weaviate.Client/Weaviate.Client.csproj",
   "expectedPackageFiles": [
     "/home/ubuntu/.nuget/packages/flurl/4.0.0/flurl.4.0.0.nupkg.sha512",
     "/home/ubuntu/.nuget/packages/flurl.http/4.0.0/flurl.http.4.0.0.nupkg.sha512",

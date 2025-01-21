@@ -27,7 +27,7 @@ public abstract class TestBase
 	protected static readonly string CLASS_NAME_PIZZA = "Pizza";
 	[Obsolete("Use COLLECTION_NAME_SOUP instead. This constant will be removed in v5.")]
 	protected static readonly string CLASS_NAME_SOUP = "Soup";
-	
+
 	protected static readonly string COLLECTION_NAME_PIZZA = "Pizza";
 	protected static readonly string COLLECTION_NAME_SOUP = "Soup";
 
@@ -37,7 +37,7 @@ public abstract class TestBase
 	protected static readonly string PIZZA_DOENER_ID = "d2b393ff-4b26-48c7-b554-218d970a9e17";
 	protected static readonly string SOUP_CHICKENSOUP_ID = "8c156d37-81aa-4ce9-a811-621e2702b825";
 	protected static readonly string SOUP_BEAUTIFUL_ID = "27351361-2898-4d1a-aad7-1ca48253eb0b";
-	protected readonly WeaviateClient Client = new(new("http", "localhost:8080"), new FlurlClient());
+	protected readonly WeaviateClient Client = new(new("http", "host.docker.internal:8080") { DebugLoggingEnabled = true }, new FlurlClient());
 
 	// Uncomment to try alternate seperators
 	// protected TestBase() =>
@@ -50,9 +50,9 @@ public abstract class TestBase
 	// 		}
 	// 	};
 
-	protected static void CreateWeaviateTestSchemaFood(WeaviateClient client)
+	protected static void CreateWeaviateTestCollectionsFood(WeaviateClient client)
 	{
-		client.Schema.DeleteAllCollections();
+		client.Collections.DeleteAllCollections();
 
 		var properties = new Property[]
 		{
@@ -63,7 +63,7 @@ public abstract class TestBase
 				Tokenization = Tokenization.Field,
 				IndexFilterable = true,
 				IndexSearchable = false,  // Not a text type
-				DataType = new[] { DataType.String }
+				DataType = new[] { DataType.Text }
 			},
 			new()
 			{
@@ -74,13 +74,13 @@ public abstract class TestBase
 				IndexSearchable = true,  // Text type
 				DataType = new[] { DataType.Text }
 			},
-			new() 
-			{ 
-				Name = "bestBefore", 
-				Description = "best before", 
+			new()
+			{
+				Name = "bestBefore",
+				Description = "best before",
 				IndexFilterable = true,
 				IndexSearchable = false,  // Not a text type
-				DataType = new[] { DataType.Date } 
+				DataType = new[] { DataType.Date }
 			},
 			new()
 			{
@@ -88,26 +88,16 @@ public abstract class TestBase
 				Description = "price",
 				DataType = new[] { DataType.Number },
 				IndexFilterable = true,
-				IndexSearchable = false,  // Not a text type
-				ModuleConfig = new Dictionary<object, Dictionary<object, object>>
-				{
-					{ Vectorizer.Text2VecOllama, new() 
-						{ 
-							{ "skip", true },
-							{ "api_endpoint", "http://localhost:11434" },
-							{ "model", "mxbai-embed-large" }
-						} 
-					}
-				}
+				IndexSearchable = false  // Not a text type
 			}
 		};
 
-		var pizzaCreateStatus = client.Schema.CreateCollection(new CreateCollectionRequest(COLLECTION_NAME_PIZZA)
+		var pizzaCreateStatus = client.Collections.CreateCollection(new CreateCollectionRequest(COLLECTION_NAME_PIZZA)
 		{
 			Description = "A delicious religion like food and arguably the best export of Italy.",
 			Properties = properties,
-			VectorIndexType = VectorIndexType.HNSW.ToString(),
-			Vectorizer = Vectorizer.Text2VecOllama.ToString(),
+			VectorIndexType = "hnsw",
+			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString(),
 			VectorizerConfig = new Dictionary<string, object>
 			{
 				{ "model", "mxbai-embed-large" },
@@ -117,12 +107,12 @@ public abstract class TestBase
 
 		Assert.Equal(HttpStatusCode.OK, pizzaCreateStatus.HttpStatusCode);
 
-		var soupCreateStatus = client.Schema.CreateCollection(new CreateCollectionRequest(COLLECTION_NAME_SOUP)
+		var soupCreateStatus = client.Collections.CreateCollection(new CreateCollectionRequest(COLLECTION_NAME_SOUP)
 		{
-			Description = "Mostly water based brew of sustenance for humans.", 
+			Description = "Mostly water based brew of sustenance for humans.",
 			Properties = properties,
-			VectorIndexType = VectorIndexType.HNSW.ToString(),
-			Vectorizer = Vectorizer.Text2VecOllama.ToString(),
+			VectorIndexType = "hnsw",
+			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString(),
 			VectorizerConfig = new Dictionary<string, object>
 			{
 				{ "model", "mxbai-embed-large" },
@@ -132,9 +122,9 @@ public abstract class TestBase
 		Assert.Equal(HttpStatusCode.OK, soupCreateStatus.HttpStatusCode);
 	}
 
-	protected static void CreateWeaviateTestSchemaFoodWithReferenceProperty(WeaviateClient client)
+	protected static void CreateWeaviateTestCollectionsFoodWithReferenceProperty(WeaviateClient client)
 	{
-		CreateWeaviateTestSchemaFood(client);
+		CreateWeaviateTestCollectionsFood(client);
 
 		var referenceProperty = new Property
 		{
@@ -145,16 +135,16 @@ public abstract class TestBase
 			DataType = new[] { COLLECTION_NAME_PIZZA, COLLECTION_NAME_SOUP } // TODO! make it easy to reference collections
 		};
 
-		var pizzaRefAdd = client.Schema.CreateProperty(new(COLLECTION_NAME_PIZZA) { Property = referenceProperty });
+		var pizzaRefAdd = client.Collections.CreateProperty(new(COLLECTION_NAME_PIZZA) { Property = referenceProperty });
 		Assert.Equal(HttpStatusCode.OK, pizzaRefAdd.HttpStatusCode);
 
-		var soupRefAdd = client.Schema.CreateProperty(new(COLLECTION_NAME_SOUP) { Property = referenceProperty });
+		var soupRefAdd = client.Collections.CreateProperty(new(COLLECTION_NAME_SOUP) { Property = referenceProperty });
 		Assert.Equal(HttpStatusCode.OK, soupRefAdd.HttpStatusCode);
 	}
 
-	protected static void CreateTestSchemaAndData(WeaviateClient client)
+	protected static void CreateTestCollectionsAndData(WeaviateClient client)
 	{
-		CreateWeaviateTestSchemaFood(client);
+		CreateWeaviateTestCollectionsFood(client);
 
 		var menuPizza = new[]
 		{

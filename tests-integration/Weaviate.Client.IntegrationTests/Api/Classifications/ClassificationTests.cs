@@ -78,17 +78,17 @@ public class ClassificationTests : TestBase
 
 	private void CreateClassificationClasses()
 	{
-		CreateWeaviateTestSchemaFood(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var tagProperty = new Property { Name = "name", Description = "name", DataType = new[] { DataType.String } };
 
-		var tagResult = Client.Schema.CreateCollection(new CreateCollectionRequest("Tag")
+		var tagResult = Client.Collections.CreateCollection(new CreateCollectionRequest("Tag")
 		{
 			Description = "tag for a pizza", Properties = new[] { tagProperty }
 		});
 		Assert.Equal(HttpStatusCode.OK, tagResult.HttpStatusCode);
 
-		var tagPropertyResult = Client.Schema.CreateProperty(new(COLLECTION_NAME_PIZZA)
+		var tagPropertyResult = Client.Collections.CreateProperty(new(COLLECTION_NAME_PIZZA)
 		{
 			Property = new() { Name = "tagged", Description = "tag of pizza", DataType = new[] { "Tag" } }
 		});

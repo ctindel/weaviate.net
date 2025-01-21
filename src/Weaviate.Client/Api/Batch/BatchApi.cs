@@ -23,12 +23,6 @@ public class BatchApi
 
         var response = _transport.Post<BatchResponse<WeaviateObjectResponse>, CreateObjectsBatchRequest>("/v1/batch/objects", request);
         
-        if (response.Result != null)
-        {
-            response.Result.Successful = response.Result.Results?.Successful ?? 0;
-            response.Result.Failed = response.Result.Results?.Failed ?? 0;
-        }
-
         return response;
     }
 
