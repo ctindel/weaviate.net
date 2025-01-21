@@ -41,6 +41,9 @@ public abstract class TestBase
 
 	static TestBase()
 	{
+		// Enable debug logging for all tests
+		Environment.SetEnvironmentVariable("WEAVIATE_CLIENT_DEBUG", "true");
+
 		// Set environment variables for Docker networking
 		Environment.SetEnvironmentVariable("DOCKER_HOST", "tcp://host.docker.internal:2375");
 		Environment.SetEnvironmentVariable("DOCKER_CERT_PATH", "");
