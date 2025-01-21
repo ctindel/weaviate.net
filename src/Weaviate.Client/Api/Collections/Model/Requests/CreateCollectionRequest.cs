@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Text.Json.Serialization;
+
 // ReSharper disable once CheckNamespace
 namespace Weaviate.Client;
 
@@ -26,9 +28,38 @@ public class CreateCollectionRequest : WeaviateCollection
     }
 
     [Obsolete("Use Name property instead. This property will be removed in v5.")]
+    [JsonIgnore]
     public new string Class
     {
         get => Name;
         set => Name = value;
+    }
+
+    public new Dictionary<string, object>? VectorizerConfig
+    {
+        get => base.VectorizerConfig;
+        set
+        {
+            if (value != null)
+            {
+                var moduleConfigDict = new Dictionary<string, object>();
+
+                // Copy over model and apiEndpoint if provided
+                if (value.TryGetValue("model", out var model))
+                    moduleConfigDict["model"] = model?.ToString()?.EndsWith(":latest") == true ? model : $"{model}:latest";
+                if (value.TryGetValue("apiEndpoint", out var endpoint))
+                    moduleConfigDict["apiEndpoint"] = (endpoint?.ToString() ?? "http://host.docker.internal:11434").Replace("localhost", "host.docker.internal");
+
+                // Always set these fields to match Python client behavior
+                moduleConfigDict["skip"] = value.TryGetValue("skip", out var skip) ? skip : false;
+                moduleConfigDict["vectorizePropertyName"] = value.TryGetValue("vectorizePropertyName", out var vectorizePropertyName) ? vectorizePropertyName : true;
+                moduleConfigDict["vectorizeClassName"] = value.TryGetValue("vectorizeClassName", out var vectorizeClassName) ? vectorizeClassName : true;
+
+                ModuleConfig = new Dictionary<string, Dictionary<string, object>>
+                {
+                    ["text2vec-ollama"] = moduleConfigDict
+                };
+            }
+        }
     }
 }

@@ -39,6 +39,14 @@ public abstract class TestBase
 	protected static readonly string SOUP_BEAUTIFUL_ID = "27351361-2898-4d1a-aad7-1ca48253eb0b";
 	protected readonly WeaviateClient Client = new(new("http", "host.docker.internal:8080") { DebugLoggingEnabled = true }, new FlurlClient());
 
+	static TestBase()
+	{
+		// Set environment variables for Docker networking
+		Environment.SetEnvironmentVariable("DOCKER_HOST", "tcp://host.docker.internal:2375");
+		Environment.SetEnvironmentVariable("DOCKER_CERT_PATH", "");
+		Environment.SetEnvironmentVariable("DOCKER_TLS_VERIFY", "0");
+	}
+
 	// Uncomment to try alternate seperators
 	// protected TestBase() =>
 	// 	Thread.CurrentThread.CurrentCulture = new CultureInfo(CultureInfo.CurrentCulture.Name)
@@ -96,12 +104,18 @@ public abstract class TestBase
 		{
 			Description = "A delicious religion like food and arguably the best export of Italy.",
 			Properties = properties,
-			VectorIndexType = "hnsw",
+			VectorIndexType = VectorIndexType.HNSW,
 			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString(),
-			VectorizerConfig = new Dictionary<string, object>
+			ModuleConfig = new Dictionary<string, Dictionary<string, object>>
 			{
-				{ "model", "mxbai-embed-large" },
-				{ "api_endpoint", "http://host.docker.internal:11434" }
+				["text2vec-ollama"] = new Dictionary<string, object>
+				{
+					{ "model", "mxbai-embed-large" },
+					{ "apiEndpoint", "http://host.docker.internal:11434" },
+					{ "skip", false },
+					{ "vectorizePropertyName", true },
+					{ "vectorizeClassName", false }
+				}
 			}
 		});
 
@@ -111,12 +125,18 @@ public abstract class TestBase
 		{
 			Description = "Mostly water based brew of sustenance for humans.",
 			Properties = properties,
-			VectorIndexType = "hnsw",
+			VectorIndexType = VectorIndexType.HNSW,
 			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString(),
-			VectorizerConfig = new Dictionary<string, object>
+			ModuleConfig = new Dictionary<string, Dictionary<string, object>>
 			{
-				{ "model", "mxbai-embed-large" },
-				{ "api_endpoint", "http://host.docker.internal:11434" }
+				["text2vec-ollama"] = new Dictionary<string, object>
+				{
+					{ "model", "mxbai-embed-large" },
+					{ "apiEndpoint", "http://host.docker.internal:11434" },
+					{ "skip", false },
+					{ "vectorizePropertyName", true },
+					{ "vectorizeClassName", false }
+				}
 			}
 		});
 		Assert.Equal(HttpStatusCode.OK, soupCreateStatus.HttpStatusCode);
@@ -179,8 +199,9 @@ public abstract class TestBase
 	}
 
 	private static WeaviateObject CreateObject(string id, string className, string name, string description,
-		float price, string bestBeforeRfc3339) =>
-		new()
+		float price, string bestBeforeRfc3339)
+	{
+		var obj = new WeaviateObject
 		{
 			Id = id,
 			Collection = className,
@@ -192,4 +213,19 @@ public abstract class TestBase
 				{ "bestBefore", bestBeforeRfc3339 }
 			}
 		};
+
+		obj.ModuleConfig = new Dictionary<string, Dictionary<string, object>>
+		{
+			["text2vec-ollama"] = new Dictionary<string, object>
+			{
+				{ "model", "mxbai-embed-large" },
+				{ "apiEndpoint", "http://host.docker.internal:11434" },
+				{ "skip", false },
+				{ "vectorizePropertyName", true },
+				{ "vectorizeClassName", false }
+			}
+		};
+
+		return obj;
+	}
 }

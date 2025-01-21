@@ -17,6 +17,7 @@ using System.Text.Json.Serialization;
 // ReSharper disable once CheckNamespace
 namespace Weaviate.Client;
 
+[JsonConverter(typeof(PropertyJsonConverter))]
 public class Property
 {
     [JsonPropertyName("name")]
@@ -29,6 +30,7 @@ public class Property
     public string? Description { get; set; }
 
     [JsonPropertyName("tokenization")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public Tokenization? Tokenization { get; set; }
     
     // v4 API additions
@@ -56,12 +58,11 @@ public class Property
     public PropertyRerankerConfig? RerankerConfig { get; set; }
     
     // Module-specific configuration (for vectorizers, etc.)
-    [JsonPropertyName("moduleConfig")]
-    public object? ModuleConfig { get; set; }
-    
-    // Nested property support
     [JsonPropertyName("nestedProperties")]
     public Property[]? NestedProperties { get; set; }
+    
+    [JsonIgnore]
+    public object? ModuleConfig { get; set; }
 }
 
 /// <summary>

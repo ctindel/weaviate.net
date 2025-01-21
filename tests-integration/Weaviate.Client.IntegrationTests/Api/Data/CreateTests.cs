@@ -105,7 +105,7 @@ public class CreateTests : TestBase
 		var collection = Client.Collections.CreateCollection(new CreateCollectionRequest(@class)
 		{
 			Description = "Collection which properties are all array properties",
-			VectorIndexType = VectorIndexType.HNSW.ToString(),
+			VectorIndexType = VectorIndexType.HNSW,
 			Vectorizer = Vectorizer.Text2VecContextionary.ToString(),
 			Properties = new Property[]
 			{

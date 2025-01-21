@@ -29,7 +29,7 @@ public class CollectionsApi
     /// </summary>
     /// <returns>All collections and their configurations.</returns>
     public ApiResponse<WeaviateCollections> GetCollections()
-	    => _transport.GetAsync<WeaviateCollections>("/v1/collections").GetAwaiter().GetResult();
+	    => _transport.GetAsync<WeaviateCollections>("/v1/schema").GetAwaiter().GetResult();
 
     /// <summary>
     /// Gets all collection configurations asynchronously.
@@ -37,7 +37,7 @@ public class CollectionsApi
     /// <param name="cancellationToken">Optional token to cancel the operation.</param>
     /// <returns>All collections and their configurations.</returns>
     public async Task<ApiResponse<WeaviateCollections>> GetCollectionsAsync(CancellationToken cancellationToken = default)
-	    => await _transport.GetAsync<WeaviateCollections>("/v1/collections", cancellationToken).ConfigureAwait(false);
+	    => await _transport.GetAsync<WeaviateCollections>("/v1/schema", cancellationToken).ConfigureAwait(false);
 
     /// <summary>
     /// Gets a collection configuration by name.
@@ -45,7 +45,7 @@ public class CollectionsApi
     /// <param name="request">The request containing the collection name.</param>
     /// <returns>The collection configuration.</returns>
     public ApiResponse<WeaviateCollection> GetCollection(GetCollectionRequest request)
-	    => _transport.GetAsync<WeaviateCollection>($"/v1/collections/{request.Name}").GetAwaiter().GetResult();
+	    => _transport.GetAsync<WeaviateCollection>($"/v1/schema/{request.Name}").GetAwaiter().GetResult();
 
     /// <summary>
     /// Gets a collection configuration by name asynchronously.
@@ -54,7 +54,7 @@ public class CollectionsApi
     /// <param name="cancellationToken">Optional token to cancel the operation.</param>
     /// <returns>The collection configuration.</returns>
     public async Task<ApiResponse<WeaviateCollection>> GetCollectionAsync(GetCollectionRequest request, CancellationToken cancellationToken = default)
-	    => await _transport.GetAsync<WeaviateCollection>($"/v1/collections/{request.Name}", cancellationToken).ConfigureAwait(false);
+	    => await _transport.GetAsync<WeaviateCollection>($"/v1/schema/{request.Name}", cancellationToken).ConfigureAwait(false);
 
     public ApiResponse<Shard[]> GetShards(GetShardsRequest request)
 	    => _transport.GetAsync<Shard[]>($"/v1/schema/{request.CollectionName}/shards").GetAwaiter().GetResult();
@@ -68,7 +68,7 @@ public class CollectionsApi
     /// <param name="request">The request containing the collection configuration.</param>
     /// <returns>The created collection configuration.</returns>
     public ApiResponse<WeaviateCollection> CreateCollection(CreateCollectionRequest request)
-	    => _transport.PostAsync<WeaviateCollection, WeaviateCollection>("/v1/collections", request).GetAwaiter().GetResult();
+	    => _transport.PostAsync<WeaviateCollection, WeaviateCollection>("/v1/schema", request).GetAwaiter().GetResult();
 
     /// <summary>
     /// Creates a new collection with the specified configuration asynchronously.
@@ -77,7 +77,7 @@ public class CollectionsApi
     /// <param name="cancellationToken">Optional token to cancel the operation.</param>
     /// <returns>The created collection configuration.</returns>
     public async Task<ApiResponse<WeaviateCollection>> CreateCollectionAsync(CreateCollectionRequest request, CancellationToken cancellationToken = default)
-	    => await _transport.PostAsync<WeaviateCollection, WeaviateCollection>("/v1/collections", request, cancellationToken).ConfigureAwait(false);
+	    => await _transport.PostAsync<WeaviateCollection, WeaviateCollection>("/v1/schema", request, cancellationToken).ConfigureAwait(false);
 
     /// <summary>
     /// Updates a shard's status in a collection.
@@ -113,7 +113,7 @@ public class CollectionsApi
     /// <param name="request">The request containing the collection name.</param>
     /// <returns>The API response indicating success or failure.</returns>
     public ApiResponse<object> DeleteCollection(DeleteCollectionRequest request)
-	    => _transport.DeleteAsync<object>($"/v1/collections/{request.Name}").GetAwaiter().GetResult();
+	    => _transport.DeleteAsync<object>($"/v1/schema/{request.Name}").GetAwaiter().GetResult();
 
     /// <summary>
     /// Deletes a collection by name asynchronously.
@@ -122,7 +122,7 @@ public class CollectionsApi
     /// <param name="cancellationToken">Optional token to cancel the operation.</param>
     /// <returns>The API response indicating success or failure.</returns>
     public async Task<ApiResponse<object>> DeleteCollectionAsync(DeleteCollectionRequest request, CancellationToken cancellationToken = default)
-	    => await _transport.DeleteAsync<object>($"/v1/collections/{request.Name}", cancellationToken).ConfigureAwait(false);
+	    => await _transport.DeleteAsync<object>($"/v1/schema/{request.Name}", cancellationToken).ConfigureAwait(false);
 
     /// <summary>
     /// Creates a new property in a collection.

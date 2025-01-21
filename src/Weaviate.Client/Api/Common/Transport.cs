@@ -10,13 +10,40 @@ public class Transport : IDisposable
 {
     private readonly HttpClient _client;
     private readonly string _baseUrl;
-    public bool DebugLoggingEnabled { get; set; }
+    public bool DebugLoggingEnabled { get; set; } = true;
 
     public Transport(string baseUrl, HttpClient? client = null)
     {
         _baseUrl = baseUrl;
         _client = client ?? new HttpClient();
-        DebugLoggingEnabled = false;
+        DebugLoggingEnabled = true;
+    }
+
+    private void EnsureHeaders()
+    {
+        var headers = new Dictionary<string, string>
+        {
+            { "X-External-Host", "host.docker.internal" },
+            { "X-Ollama-Host", "host.docker.internal" },
+            { "X-Ollama-Api-Host", "host.docker.internal" }
+        };
+
+        // Remove existing headers to ensure they are set correctly
+        foreach (var header in headers.Keys)
+        {
+            if (_client.DefaultRequestHeaders.Contains(header))
+            {
+                _client.DefaultRequestHeaders.Remove(header);
+            }
+        }
+
+        // Add all headers
+        foreach (var header in headers)
+        {
+            _client.DefaultRequestHeaders.Add(header.Key, header.Value);
+        }
+
+        LogDebug($"Headers set: {string.Join(", ", _client.DefaultRequestHeaders.Select(h => $"{h.Key}={string.Join(",", h.Value)}"))}");
     }
 
     private static void LogDebug(Transport transport, string message)
@@ -24,6 +51,8 @@ public class Transport : IDisposable
         if (transport.DebugLoggingEnabled)
         {
             Console.WriteLine($"[DEBUG] {message}");
+            // Force flush to ensure output is visible
+            Console.Out.Flush();
         }
     }
 
@@ -60,6 +89,7 @@ public class Transport : IDisposable
             }
 
             LogDebug($"Making GET request to: {url}");
+            EnsureHeaders();
             var response = await _client.GetAsync(url, cancellationToken);
             LogDebug($"Response status code: {response.StatusCode}");
             
@@ -98,9 +128,54 @@ public class Transport : IDisposable
             var url = $"{baseUrl}/{cleanPath}";
             
             LogDebug($"Making POST request to: {url}");
-            var requestJson = System.Text.Json.JsonSerializer.Serialize(request);
-            LogDebug($"Request content: {requestJson}");
-            var response = await _client.PostAsJsonAsync(url, request, cancellationToken);
+            EnsureHeaders();
+            LogDebug($"Using headers: {string.Join(", ", _client.DefaultRequestHeaders.Select(h => $"{h.Key}={string.Join(",", h.Value)}"))}");
+            
+            var serializerOptions = new System.Text.Json.JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                WriteIndented = true,
+                PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+                Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter(System.Text.Json.JsonNamingPolicy.CamelCase) }
+            };
+            
+            // Initial serialization for logging
+            var initialJson = System.Text.Json.JsonSerializer.Serialize(request, serializerOptions);
+            LogDebug($"Request content (initial): {initialJson}");
+            
+            // Replace localhost with host.docker.internal in request content
+            if (initialJson.Contains("localhost"))
+            {
+                // Deserialize to dynamic object
+                var requestObj = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonDocument>(initialJson, serializerOptions);
+                if (requestObj != null)
+                {
+                    var transformed = ReplaceLocalhostInJsonElement(requestObj.RootElement);
+                    if (transformed != null)
+                    {
+                        // Serialize transformed object back to JSON
+                        var transformedJson = System.Text.Json.JsonSerializer.Serialize(transformed, serializerOptions);
+                        LogDebug($"Request content (transformed): {transformedJson}");
+                        
+                        // Deserialize back to the original type
+                        var transformedRequest = System.Text.Json.JsonSerializer.Deserialize<TRequest>(transformedJson, serializerOptions);
+                        if (transformedRequest != null)
+                        {
+                            request = transformedRequest;
+                        }
+                    }
+                }
+            }
+            
+            // Final serialization and request
+            var finalJson = System.Text.Json.JsonSerializer.Serialize(request, serializerOptions);
+            Console.WriteLine("\n=== REQUEST DETAILS ===");
+            Console.WriteLine($"URL: {url}");
+            Console.WriteLine($"Request JSON:\n{finalJson}");
+            Console.WriteLine("=== END REQUEST DETAILS ===\n");
+            Console.Out.Flush();
+            var response = await _client.PostAsJsonAsync(url, request, serializerOptions, cancellationToken);
             LogDebug($"Response status code: {response.StatusCode}");
             
             if (response.Content.Headers.ContentLength > 0)
@@ -133,9 +208,18 @@ public class Transport : IDisposable
             var url = $"{baseUrl}/{cleanPath}";
             
             LogDebug($"Making PUT request to: {url}");
-            var requestJson = System.Text.Json.JsonSerializer.Serialize(request);
+            EnsureHeaders();
+            var serializerOptions = new System.Text.Json.JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                WriteIndented = true,
+                PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+                Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter(System.Text.Json.JsonNamingPolicy.CamelCase) }
+            };
+            var requestJson = System.Text.Json.JsonSerializer.Serialize(request, serializerOptions);
             LogDebug($"Request content: {requestJson}");
-            var response = await _client.PutAsJsonAsync(url, request, cancellationToken);
+            var response = await _client.PutAsJsonAsync(url, request, serializerOptions, cancellationToken);
             LogDebug($"Response status code: {response.StatusCode}");
             
             if (response.Content.Headers.ContentLength > 0)
@@ -168,6 +252,7 @@ public class Transport : IDisposable
             var url = $"{baseUrl}/{cleanPath}";
             
             LogDebug($"Making DELETE request to: {url}");
+            EnsureHeaders();
             var response = await _client.DeleteAsync(url, cancellationToken);
             LogDebug($"Response status code: {response.StatusCode}");
             
@@ -212,6 +297,7 @@ public class Transport : IDisposable
             }
 
             LogDebug($"Making {method} request to: {url}");
+            EnsureHeaders();
             using var httpRequest = new HttpRequestMessage(method, url);
             if (content != null)
             {
@@ -266,7 +352,10 @@ public class Transport : IDisposable
                     {
                         PropertyNameCaseInsensitive = true,
                         AllowTrailingCommas = true,
-                        ReadCommentHandling = System.Text.Json.JsonCommentHandling.Skip
+                        ReadCommentHandling = System.Text.Json.JsonCommentHandling.Skip,
+                        PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+                        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+                        Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter(System.Text.Json.JsonNamingPolicy.CamelCase) }
                     };
                     
                     if (!string.IsNullOrEmpty(content))
@@ -345,5 +434,59 @@ public class Transport : IDisposable
         }
 
         return apiResponse;
+    }
+
+    private object? ReplaceLocalhostInJsonElement(System.Text.Json.JsonElement element)
+    {
+        try
+        {
+            switch (element.ValueKind)
+            {
+                case System.Text.Json.JsonValueKind.Object:
+                    var result = new Dictionary<string, object>();
+                    foreach (var property in element.EnumerateObject())
+                    {
+                        var value = ReplaceLocalhostInJsonElement(property.Value);
+                        if (value != null)
+                        {
+                            result[property.Name] = value;
+                        }
+                    }
+                    return result;
+
+                case System.Text.Json.JsonValueKind.Array:
+                    var items = element.EnumerateArray()
+                        .Select(item => ReplaceLocalhostInJsonElement(item))
+                        .Where(item => item != null)
+                        .ToArray();
+                    return items.Length > 0 ? items : null;
+
+                case System.Text.Json.JsonValueKind.String:
+                    var strValue = element.GetString();
+                    if (string.IsNullOrEmpty(strValue)) return null;
+                    return strValue.Contains("localhost") 
+                        ? strValue.Replace("localhost", "host.docker.internal") 
+                        : strValue;
+
+                case System.Text.Json.JsonValueKind.Number:
+                    return element.GetRawText();
+
+                case System.Text.Json.JsonValueKind.True:
+                    return true;
+
+                case System.Text.Json.JsonValueKind.False:
+                    return false;
+
+                case System.Text.Json.JsonValueKind.Null:
+                    return null;
+
+                default:
+                    return element.GetRawText();
+            }
+        }
+        catch
+        {
+            return null;
+        }
     }
 }
