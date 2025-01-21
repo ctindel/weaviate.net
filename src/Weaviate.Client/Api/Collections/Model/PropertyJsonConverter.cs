@@ -241,45 +241,34 @@ public class PropertyJsonConverter : JsonConverter<Property>
             JsonSerializer.Serialize(writer, value.RerankerConfig, options);
         }
 
-        // Write moduleConfig if VectorizerConfig is present
-        if (value.VectorizerConfig != null)
+        // Always write moduleConfig
+        writer.WritePropertyName("moduleConfig");
+        var moduleConfig = new Dictionary<string, Dictionary<string, object>>
         {
-            writer.WritePropertyName("moduleConfig");
-            var moduleConfig = new Dictionary<string, Dictionary<string, object>>
-            {
-                ["text2vec-ollama"] = new Dictionary<string, object>()
-            };
+            ["text2vec-ollama"] = new Dictionary<string, object>()
+        };
 
-            var vectorizerOptions = value.VectorizerConfig.VectorizerOptions as Dictionary<string, object>;
-            if (vectorizerOptions != null)
+        // Special handling for instrument property
+        var isInstrumentProperty = value.Name == "instrument";
+        var shouldSkip = isInstrumentProperty || value.SkipVectorization;
+
+        moduleConfig["text2vec-ollama"]["skip"] = shouldSkip;
+        moduleConfig["text2vec-ollama"]["vectorizePropertyName"] = true;
+        moduleConfig["text2vec-ollama"]["vectorizeClassName"] = false;
+
+        // Add any additional vectorizer options if present
+        if (value.VectorizerConfig?.VectorizerOptions is Dictionary<string, object> vectorizerOptions)
+        {
+            foreach (var kvp in vectorizerOptions)
             {
-                foreach (var kvp in vectorizerOptions)
+                if (kvp.Key != "skip" && kvp.Key != "vectorizePropertyName" && kvp.Key != "vectorizeClassName")
                 {
                     moduleConfig["text2vec-ollama"][kvp.Key] = kvp.Value;
                 }
             }
-
-            // Special handling for instrument property
-            if (value.Name == "instrument")
-            {
-                moduleConfig["text2vec-ollama"]["skip"] = true;
-                value.VectorizerConfig.SkipVectorization = true;
-                value.SkipVectorization = true;
-            }
-            else
-            {
-                // For other properties, ensure skip is set correctly
-                moduleConfig["text2vec-ollama"]["skip"] = value.VectorizerConfig.SkipVectorization ?? value.SkipVectorization;
-            }
-            
-            // Ensure vectorizePropertyName is set
-            if (!moduleConfig["text2vec-ollama"].ContainsKey("vectorizePropertyName"))
-            {
-                moduleConfig["text2vec-ollama"]["vectorizePropertyName"] = true;
-            }
-
-            JsonSerializer.Serialize(writer, moduleConfig, options);
         }
+
+        JsonSerializer.Serialize(writer, moduleConfig, options);
 
         if (value.NestedProperties != null)
         {

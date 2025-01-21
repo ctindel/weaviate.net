@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyCopyrightAttribute("Weaviate")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("0.1.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.1.0-preview.0.3+9586ccc023324cc07d0bc6f0c497d9b49ac1725f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.1.0-preview.0.4+aa87ba17a391d909d7e61b7d38d2489441982fe4")]
 [assembly: System.Reflection.AssemblyProductAttribute("Weaviate.Client.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Weaviate.Client.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("0.0.0.0")]
