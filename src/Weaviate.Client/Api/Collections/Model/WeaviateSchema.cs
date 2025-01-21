@@ -16,22 +16,22 @@
 namespace Weaviate.Client;
 
 /// <summary>
-/// Represents the complete schema of collections in Weaviate.
+/// Represents all collections in Weaviate.
 /// </summary>
-public class WeaviateSchema
+public class WeaviateCollections
 {
     /// <summary>
-    /// The name of the schema.
+    /// The name of the collections group.
     /// </summary>
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// The maintainer of the schema.
+    /// The maintainer of the collections.
     /// </summary>
     public string Maintainer { get; set; } = string.Empty;
 
     /// <summary>
-    /// The collections defined in the schema.
+    /// The collections defined in Weaviate.
     /// </summary>
     public List<WeaviateCollection> Collections { get; set; } = new();
 

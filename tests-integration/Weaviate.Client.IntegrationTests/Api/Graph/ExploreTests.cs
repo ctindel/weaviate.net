@@ -22,7 +22,7 @@ public class ExploreTests : TestBase
 	[Fact]
 	public void ExploreWithCertainty()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Explore(new()
 		{
@@ -46,7 +46,7 @@ public class ExploreTests : TestBase
 	[Fact]
 	public void ExploreWithDistance()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Explore(new()
 		{

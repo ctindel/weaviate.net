@@ -24,7 +24,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void GetActionsThings()
 	{
-		CreateWeaviateTestSchemaFood(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var margherita = Client.Data.Create(new(COLLECTION_NAME_PIZZA)
 		{
@@ -73,7 +73,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void GetWithAdditional()
 	{
-		CreateWeaviateTestSchemaFood(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var pizzaId = "abefd256-8574-442b-9293-9205193737ee";
 		var soupId = "565da3b6-60b3-40e5-ba21-e6bfe5dbba91";
@@ -145,7 +145,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void GetWithAdditionalError()
 	{
-		CreateWeaviateTestSchemaFood(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var pizzaId = "abefd256-8574-442b-9293-9205193737ee";
 		var hawaiian = Client.Data.Create(new(COLLECTION_NAME_PIZZA)
@@ -175,16 +175,16 @@ public class GetTests : TestBase
 	[Fact]
 	public void GetWithVector()
 	{
-		Client.Schema.DeleteAllCollections();
+		Client.Collections.DeleteAllCollections();
 
 		const string @class = "ClassCustomVector";
-		var schema = Client.Schema.CreateCollection(new CreateCollectionRequest(@class)
+		var collection = Client.Collections.CreateCollection(new CreateCollectionRequest(@class)
 		{
 			Description = "Collection with custom vector",
 			Vectorizer = nameof(Vectorizer.None),
 			Properties = new Property[] { new() { Name = "foo", DataType = new[] { DataType.String } } }
 		});
-		Assert.Equal(HttpStatusCode.OK, schema.HttpStatusCode);
+		Assert.Equal(HttpStatusCode.OK, collection.HttpStatusCode);
 
 		var id = "abefd256-8574-442b-9293-9205193737ee";
 		var floats = new[]
@@ -211,7 +211,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void GetUsingCollectionParameter()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var all = Client.Data.GetAll();
 		Assert.True(all.HttpStatusCode == HttpStatusCode.OK);

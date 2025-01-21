@@ -24,7 +24,7 @@ public class CreateTests : TestBase
 	[Fact]
 	public void Create()
 	{
-		CreateWeaviateTestSchemaFood(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var id1 = "abefd256-8574-442b-9293-9205193737ee";
 		var id2 = "565da3b6-60b3-40e5-ba21-e6bfe5dbba91";
@@ -74,7 +74,7 @@ public class CreateTests : TestBase
 	[Fact]
 	public void CreateWithSpecialCharacters()
 	{
-		CreateWeaviateTestSchemaFood(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var id1 = "abefd256-8574-442b-9293-9205193737ee";
 
@@ -99,10 +99,10 @@ public class CreateTests : TestBase
 	[Fact]
 	public void CreateWithArrayType()
 	{
-		Client.Schema.DeleteAllCollections();
+		Client.Collections.DeleteAllCollections();
 
 		const string @class = "CollectionArrays";
-		var schema = Client.Schema.CreateCollection(new CreateCollectionRequest(@class)
+		var collection = Client.Collections.CreateCollection(new CreateCollectionRequest(@class)
 		{
 			Description = "Collection which properties are all array properties",
 			VectorIndexType = VectorIndexType.HNSW.ToString(),
@@ -116,7 +116,7 @@ public class CreateTests : TestBase
 				new() { Name = "booleanArray", DataType = new[] { DataType.BooleanArray } }
 			}
 		});
-		Assert.Equal(HttpStatusCode.OK, schema.HttpStatusCode);
+		Assert.Equal(HttpStatusCode.OK, collection.HttpStatusCode);
 
 		var id = "abefd256-8574-442b-9293-9205193737ee";
 
@@ -160,7 +160,7 @@ public class CreateTests : TestBase
 	[Fact]
 	public void CreateWithIdInNotUuidFormat()
 	{
-		CreateWeaviateTestSchemaFood(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var newPizza = Client.Data.Create(new(COLLECTION_NAME_PIZZA)
 		{

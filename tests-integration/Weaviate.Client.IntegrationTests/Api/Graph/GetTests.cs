@@ -24,7 +24,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void Get()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Get(new() { Collection = COLLECTION_NAME_PIZZA, Fields = "name".AsFields() });
 		Assert.Equal(HttpStatusCode.OK, result.HttpStatusCode);
@@ -41,7 +41,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void NearObjectAndCertainty()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		const string id = "6baed48e-2afe-4be4-a09d-b00a955d962b";
 
@@ -71,7 +71,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void NearObjectAndDistance()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		const string id = "6baed48e-2afe-4be4-a09d-b00a955d962b";
 
@@ -101,7 +101,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void BM25()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Get(new()
 		{
@@ -128,7 +128,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void Hybrid()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Get(new()
 		{
@@ -151,7 +151,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void NearTextAndCertainty()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Get(new()
 		{
@@ -178,7 +178,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void NearTextAndDistance()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Get(new()
 		{
@@ -205,7 +205,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void NearTextAndMoveParamsAndCertainty()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		const string id1 = "6baed48e-2afe-4be4-a09d-b00a955d962b";
 		const string id2 = "6baed48e-2afe-4be4-a09d-b00a955d962a";
@@ -254,7 +254,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void NearTextAndLimitAndCertainty()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Get(new()
 		{
@@ -277,7 +277,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void NearTextAndLimitAndDistance()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Get(new()
 		{
@@ -300,7 +300,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void WhereByFieldTokenizedProperty()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		void AssertCount(int count, ApiResponse<GraphResponse> result)
 		{
@@ -361,7 +361,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void WhereByDate()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Get(new()
 		{
@@ -387,7 +387,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void Group()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Get(new()
 		{
@@ -409,7 +409,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void Sort()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		void AssertOrder(IReadOnlyList<string> order, ApiResponse<GraphResponse> result)
 		{
@@ -463,7 +463,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void GetWithTimestampFilters()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var fields = new[]
 		{
@@ -563,7 +563,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void GetUsingCursorAPI()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Get(new()
 		{
@@ -586,7 +586,7 @@ public class GetTests : TestBase
 	[Fact]
 	public void GetUsingLimitAndOffset()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Get(new()
 		{

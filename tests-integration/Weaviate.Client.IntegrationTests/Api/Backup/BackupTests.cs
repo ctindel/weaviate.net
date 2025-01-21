@@ -25,7 +25,7 @@ public class BackupTests : TestBase
 	[Fact]
 	public void CreateAndRestoreBackupWithWaiting()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var backupId = "backup-" + new Random().Next(int.MaxValue);
 
@@ -78,7 +78,7 @@ public class BackupTests : TestBase
 	[Fact]
 	public void CreateAndRestoreBackupWithoutWaiting()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var backupId = "backup-" + new Random().Next(int.MaxValue);
 
@@ -143,7 +143,7 @@ public class BackupTests : TestBase
 	[Fact]
 	public void CreateAndRestore1Of2Classes()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		AssertAllPizzasExist();
 		AssertAllSoupsExist();
@@ -193,7 +193,7 @@ public class BackupTests : TestBase
 	[Fact]
 	public void FailOnCreateBackupForNotExistingClass()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var backupId = "backup-" + new Random().Next(int.MaxValue);
 
@@ -209,7 +209,7 @@ public class BackupTests : TestBase
 	[Fact]
 	public void FailOnRestoreBackupForExistingClass()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var backupId = "backup-" + new Random().Next(int.MaxValue);
 
@@ -240,7 +240,7 @@ public class BackupTests : TestBase
 	[Fact]
 	public void FailOnCreateOfExistingBackup()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var backupId = "backup-" + new Random().Next(int.MaxValue);
 
@@ -268,7 +268,7 @@ public class BackupTests : TestBase
 	[Fact]
 	public void FailOnCreateStatusOfNotExistingBackup()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var backupId = "backup-" + new Random().Next(int.MaxValue);
 
@@ -280,7 +280,7 @@ public class BackupTests : TestBase
 	[Fact]
 	public void FailOnRestoreOfNotExistingBackup()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var backupId = "not-existing-backup-id";
 		var restore = Client.Backup.Restore(new(backupId, Backend.Filesystem)
@@ -295,7 +295,7 @@ public class BackupTests : TestBase
 	[Fact]
 	public void FailOnCreateBackupForBothIncludeAndExcludeCollections()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var backupId = "backup-" + new Random().Next(int.MaxValue);
 
@@ -314,7 +314,7 @@ public class BackupTests : TestBase
 	[Fact]
 	public void FailOnRestoreBackupForBothIncludeAndExcludeCollections()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var backupId = "backup-" + new Random().Next(int.MaxValue);
 
@@ -348,7 +348,7 @@ public class BackupTests : TestBase
 
 	private void DeleteAllPizzas()
 	{
-		var delete = Client.Schema.DeleteCollection(new DeleteCollectionRequest(COLLECTION_NAME_PIZZA));
+		var delete = Client.Collections.DeleteCollection(new DeleteCollectionRequest(COLLECTION_NAME_PIZZA));
 		Assert.Equal(HttpStatusCode.OK, delete.HttpStatusCode);
 	}
 

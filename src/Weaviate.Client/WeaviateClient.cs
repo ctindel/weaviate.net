@@ -63,7 +63,7 @@ public class WeaviateClient
 			: $"{config.Scheme}://{config.Host.TrimEnd('/')}";
 		
 		// Initialize transport with properly formatted base URL
-		_transport = new(baseUrl, flurlClient.HttpClient);
+		_transport = new(baseUrl, flurlClient.HttpClient) { DebugLoggingEnabled = config.DebugLoggingEnabled };
 		
 		// Try to connect and verify server is accessible
 		var metaResponse = Misc.Meta();
@@ -99,9 +99,9 @@ public class WeaviateClient
 	public MiscApi Misc => new(_transport);
 
 	/// <summary>
-	///     Schema operations
+	///     Collection operations
 	/// </summary>
-	public SchemaApi Schema => new(_transport);
+	public CollectionsApi Collections => new(_transport);
 
 	/// <summary>
 	///     Data operations

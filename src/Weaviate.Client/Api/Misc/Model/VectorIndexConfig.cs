@@ -119,8 +119,8 @@ public class VectorIndexConfig
 	/// <see cref="Skip" /> defaults to <c>false</c>; if not set to <c>true</c>, classes will be
 	/// indexed normally. This setting is immutable after class initialization. Note that the creation of a vector through
 	/// a module is decoupled from storing the vector in Weaviate. So, simply skipping the indexing does not skip the
-	/// generation of a vector if a vectorizer other than none is configured on the class (for example through a global
-	/// default). It is therefore recommended to always set: <see cref="WeaviateClass.Vectorizer"/> to <value>none</value> explicitly
+	/// generation of a vector if a vectorizer other than none is configured on the collection (for example through a global
+	/// default). It is therefore recommended to always set: <see cref="WeaviateCollection.Vectorizer"/> to <value>none</value> explicitly
 	/// when skipping the vector indexing. If vector indexing is skipped, but a vectorizer is configured
 	/// (or a vector is provided manually) a warning is logged on each import.
 	/// </summary>

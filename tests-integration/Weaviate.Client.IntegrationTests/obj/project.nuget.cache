@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ZsYb1vRVncA=",
+  "dgSpecHash": "MWjXh04stPU=",
   "success": true,
-  "projectFilePath": "/home/ubuntu/repos/weaviate-dotnet-client/tests-integration/Weaviate.Client.IntegrationTests/Weaviate.Client.IntegrationTests.csproj",
+  "projectFilePath": "/home/ubuntu/weaviate-repos/weaviate.net/tests-integration/Weaviate.Client.IntegrationTests/Weaviate.Client.IntegrationTests.csproj",
   "expectedPackageFiles": [
     "/home/ubuntu/.nuget/packages/coverlet.collector/6.0.0/coverlet.collector.6.0.0.nupkg.sha512",
     "/home/ubuntu/.nuget/packages/flurl/4.0.0/flurl.4.0.0.nupkg.sha512",

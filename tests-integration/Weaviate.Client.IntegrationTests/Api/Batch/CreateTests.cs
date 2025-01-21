@@ -29,7 +29,7 @@ public class CreateTests : TestBase
 		const string id3 = "565da3b6-60b3-40e5-ba21-e6bfe5dbba91";
 		const string id4 = "07473b34-0ab2-4120-882d-303d9e13f7af";
 
-		CreateWeaviateTestSchemaFood(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var batch = Client.Batch.CreateObjects(new(
 			new WeaviateObject

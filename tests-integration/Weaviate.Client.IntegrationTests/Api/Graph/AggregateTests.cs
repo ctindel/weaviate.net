@@ -24,7 +24,7 @@ public class AggregateTests : TestBase
 	[Fact]
 	public void Aggregate()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Aggregate(new()
 		{
@@ -49,7 +49,7 @@ public class AggregateTests : TestBase
 	[Fact]
 	public void AggregateWithWhereFilter()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		const string id = "6baed48e-2afe-4be4-a09d-b00a955d96ee";
 
@@ -86,7 +86,7 @@ public class AggregateTests : TestBase
 	[Fact]
 	public void AggregateWithGroupedByAndWhere()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		const string id = "6baed48e-2afe-4be4-a09d-b00a955d96ee";
 
@@ -124,7 +124,7 @@ public class AggregateTests : TestBase
 	[Fact]
 	public void AggregateWithGroupedBy()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		const string id = "6baed48e-2afe-4be4-a09d-b00a955d96ee";
 
@@ -161,7 +161,7 @@ public class AggregateTests : TestBase
 	[Fact]
 	public void AggregateWithNearVector()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var vectorResult = Client.Graph.Get(new()
 		{
@@ -207,7 +207,7 @@ public class AggregateTests : TestBase
 	[Fact]
 	public void AggregateWithNearObjectAndCertainty()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var vectorResult = Client.Graph.Get(new()
 		{
@@ -253,7 +253,7 @@ public class AggregateTests : TestBase
 	[Fact]
 	public void AggregateWithNearObjectAndDistance()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var vectorResult = Client.Graph.Get(new() { Collection = COLLECTION_NAME_PIZZA, Fields = new[] { "id".AsAdditional() } });
 
@@ -296,7 +296,7 @@ public class AggregateTests : TestBase
 	[Fact]
 	public void AggregateWithNearTextAndCertainty()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Aggregate(new()
 		{
@@ -322,7 +322,7 @@ public class AggregateTests : TestBase
 	[Fact]
 	public void AggregateWithNearTextAndDistance()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Aggregate(new()
 		{
@@ -348,7 +348,7 @@ public class AggregateTests : TestBase
 	[Fact]
 	public void AggregateWithObjectLimitAndCertainty()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Aggregate(new()
 		{
@@ -375,7 +375,7 @@ public class AggregateTests : TestBase
 	[Fact]
 	public void AggregateWithObjectLimitAndDistance()
 	{
-		CreateTestSchemaAndData(Client);
+		CreateTestCollectionsAndData(Client);
 
 		var result = Client.Graph.Aggregate(new()
 		{

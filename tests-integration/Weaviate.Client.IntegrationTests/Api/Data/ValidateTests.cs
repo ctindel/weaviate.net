@@ -23,7 +23,7 @@ public class ValidateTests : TestBase
 	[Fact]
 	public void Validate()
 	{
-		CreateWeaviateTestSchemaFood(Client);
+		CreateWeaviateTestCollectionsFood(Client);
 
 		var pizzaId = "abefd256-8574-442b-9293-9205193737ee";
 		var soupId = "565da3b6-60b3-40e5-ba21-e6bfe5dbba91";

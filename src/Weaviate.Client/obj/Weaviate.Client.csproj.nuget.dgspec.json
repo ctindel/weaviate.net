@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/Weaviate.Client.csproj": {}
+    "/home/ubuntu/weaviate-repos/weaviate.net/src/Weaviate.Client/Weaviate.Client.csproj": {}
   },
   "projects": {
-    "/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/Weaviate.Client.csproj": {
+    "/home/ubuntu/weaviate-repos/weaviate.net/src/Weaviate.Client/Weaviate.Client.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/Weaviate.Client.csproj",
+        "projectUniqueName": "/home/ubuntu/weaviate-repos/weaviate.net/src/Weaviate.Client/Weaviate.Client.csproj",
         "projectName": "Weaviate.Client",
-        "projectPath": "/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/Weaviate.Client.csproj",
+        "projectPath": "/home/ubuntu/weaviate-repos/weaviate.net/src/Weaviate.Client/Weaviate.Client.csproj",
         "packagesPath": "/home/ubuntu/.nuget/packages/",
-        "outputPath": "/home/ubuntu/repos/weaviate-dotnet-client/src/Weaviate.Client/obj/",
+        "outputPath": "/home/ubuntu/weaviate-repos/weaviate.net/src/Weaviate.Client/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/ubuntu/repos/weaviate-dotnet-client/NuGet.config",
+          "/home/ubuntu/weaviate-repos/weaviate.net/NuGet.config",
           "/home/ubuntu/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
@@ -94,7 +94,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.405/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/home/ubuntu/.dotnet/sdk/8.0.405/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
