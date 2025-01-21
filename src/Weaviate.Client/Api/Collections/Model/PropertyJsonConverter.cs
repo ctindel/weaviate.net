@@ -14,7 +14,10 @@ public class PropertyJsonConverter : JsonConverter<Property>
             throw new JsonException("Expected StartObject token");
         }
 
-        var property = new Property();
+        var property = new Property
+        {
+            Tokenization = Tokenization.Word // Set default tokenization
+        };
         
         while (reader.Read())
         {
@@ -43,7 +46,7 @@ public class PropertyJsonConverter : JsonConverter<Property>
                     property.Description = reader.GetString();
                     break;
                 case "tokenization":
-                    property.Tokenization = JsonSerializer.Deserialize<Tokenization?>(ref reader, options);
+                    property.Tokenization = JsonSerializer.Deserialize<Tokenization>(ref reader, options);
                     break;
                 case "indexfilterable":
                     property.IndexFilterable = reader.GetBoolean();
@@ -116,11 +119,31 @@ public class PropertyJsonConverter : JsonConverter<Property>
                     break;
                 case "nestedproperties":
                     var nestedProperties = JsonSerializer.Deserialize<Property[]>(ref reader, options);
-                    property.NestedProperties = nestedProperties;
                     if (nestedProperties != null)
                     {
                         foreach (var nestedProp in nestedProperties)
                         {
+                            // Set Word tokenization for text and string fields
+                            if (nestedProp.DataType != null && 
+                                nestedProp.DataType.Any(dt => dt == "text" || dt == "string" || dt == "text[]" || dt == "string[]"))
+                            {
+                                nestedProp.Tokenization = Tokenization.Word;
+                            }
+                            
+                            // Set default moduleConfig for vectorization
+                            if (nestedProp.ModuleConfig == null)
+                            {
+                                nestedProp.ModuleConfig = new Dictionary<string, Dictionary<string, object>>
+                                {
+                                    ["text2vec-ollama"] = new Dictionary<string, object>
+                                    {
+                                        ["skip"] = nestedProp.SkipVectorization,
+                                        ["vectorizePropertyName"] = true,
+                                        ["vectorizeClassName"] = false
+                                    }
+                                };
+                            }
+
                             // Special handling for instrument property
                             if (nestedProp.Name == "instrument")
                             {
@@ -202,10 +225,11 @@ public class PropertyJsonConverter : JsonConverter<Property>
             writer.WriteString("description", value.Description);
         }
 
-        if (value.Tokenization.HasValue)
+        if (value.DataType != null && 
+            value.DataType.Any(dt => dt == "text" || dt == "string" || dt == "text[]" || dt == "string[]"))
         {
             writer.WritePropertyName("tokenization");
-            var tokenizationValue = value.Tokenization?.ToString().ToLowerInvariant();
+            var tokenizationValue = value.Tokenization.ToString().ToLowerInvariant();
             JsonSerializer.Serialize(writer, tokenizationValue, options);
         }
 
