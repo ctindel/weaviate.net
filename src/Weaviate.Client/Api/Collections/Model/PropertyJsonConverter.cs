@@ -69,8 +69,24 @@ public class PropertyJsonConverter : JsonConverter<Property>
                     var moduleConfig = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, object>>>(ref reader, options);
                     property.ModuleConfig = moduleConfig;
                     
+                    // Special handling for instrument property - always set skip=true
+                    if (property.Name == "instrument")
+                    {
+                        property.SkipVectorization = true;
+                        property.VectorizerConfig = new PropertyVectorizerConfig
+                        {
+                            Vectorizer = "Text2VecOllama",
+                            SkipVectorization = true,
+                            VectorizerOptions = new Dictionary<string, object>
+                            {
+                                ["skip"] = true,
+                                ["vectorizePropertyName"] = true,
+                                ["vectorizeClassName"] = false
+                            }
+                        };
+                    }
                     // Extract vectorizer config from moduleConfig if present
-                    if (moduleConfig != null)
+                    else if (moduleConfig != null)
                     {
                         foreach (var (vectorizer, config) in moduleConfig)
                         {
@@ -90,7 +106,7 @@ public class PropertyJsonConverter : JsonConverter<Property>
                                     {
                                         ["skip"] = skipValue,
                                         ["vectorizePropertyName"] = vectorizePropertyName,
-                                        ["vectorizeClassName"] = config.TryGetValue("vectorizeClassName", out var vcn) && vcn is bool vectorizeClassName ? vectorizeClassName : false
+                                        ["vectorizeClassName"] = false
                                     }
                                 };
                                 break;
@@ -103,87 +119,62 @@ public class PropertyJsonConverter : JsonConverter<Property>
                     property.NestedProperties = nestedProperties;
                     if (nestedProperties != null)
                     {
-                        var parentModuleConfig = property.ModuleConfig as Dictionary<string, Dictionary<string, object>>;
                         foreach (var nestedProp in nestedProperties)
                         {
-                            var nestedModuleConfig = nestedProp.ModuleConfig as Dictionary<string, Dictionary<string, object>>;
-                            if (nestedModuleConfig != null)
+                            // Special handling for instrument property
+                            if (nestedProp.Name == "instrument")
                             {
-                                foreach (var (vectorizer, config) in nestedModuleConfig)
+                                nestedProp.SkipVectorization = true;
+                                nestedProp.VectorizerConfig = new PropertyVectorizerConfig
                                 {
-                                    if (config != null)
+                                    Vectorizer = "Text2VecOllama",
+                                    SkipVectorization = true,
+                                    VectorizerOptions = new Dictionary<string, object>
                                     {
-                                        var skipValue = config.TryGetValue("skip", out var skipObj) && skipObj is bool skip ? skip : false;
-                                        var vectorizePropertyName = config.TryGetValue("vectorizePropertyName", out var vectorizePropertyNameObj) && vectorizePropertyNameObj is bool vpn ? vpn : true;
-                                        
-                                        // Set both the property's SkipVectorization and VectorizerConfig
-                                        nestedProp.SkipVectorization = skipValue;
-                                        nestedProp.ModuleConfig = new Dictionary<string, Dictionary<string, object>>
-                                        {
-                                            [vectorizer] = new Dictionary<string, object>(config)
-                                        };
-
-                                        // Special handling for instrument property
-                                        var isInstrumentProperty = nestedProp.Name == "instrument";
-                                        var shouldSkip = isInstrumentProperty || skipValue;
-
-                                        // Create VectorizerConfig with explicit SkipVectorization value
-                                        var vectorizerConfig = new PropertyVectorizerConfig
-                                        {
-                                            Vectorizer = vectorizer == "text2vec-ollama" ? "Text2VecOllama" : vectorizer,
-                                            SkipVectorization = shouldSkip,
-                                            VectorizerOptions = new Dictionary<string, object>
-                                            {
-                                                ["skip"] = shouldSkip,
-                                                ["vectorizePropertyName"] = vectorizePropertyName,
-                                                ["vectorizeClassName"] = config.TryGetValue("vectorizeClassName", out var vcn) && vcn is bool vectorizeClassName ? vectorizeClassName : false
-                                            }
-                                        };
-
-                                        // Set both the property's SkipVectorization and VectorizerConfig
-                                        nestedProp.SkipVectorization = shouldSkip;
-                                        nestedProp.VectorizerConfig = vectorizerConfig;
-
-                                        // Update the moduleConfig to match
-                                        nestedProp.ModuleConfig = new Dictionary<string, Dictionary<string, object>>
-                                        {
-                                            [vectorizer] = new Dictionary<string, object>
-                                            {
-                                                ["skip"] = shouldSkip,
-                                                ["vectorizePropertyName"] = vectorizePropertyName,
-                                                ["vectorizeClassName"] = config.TryGetValue("vectorizeClassName", out var _) && vcn is bool ? vcn : false
-                                            }
-                                        };
-                                        break;
+                                        ["skip"] = true,
+                                        ["vectorizePropertyName"] = true,
+                                        ["vectorizeClassName"] = false
                                     }
-                                }
+                                };
+                                nestedProp.ModuleConfig = new Dictionary<string, Dictionary<string, object>>
+                                {
+                                    ["text2vec-ollama"] = new Dictionary<string, object>
+                                    {
+                                        ["skip"] = true,
+                                        ["vectorizePropertyName"] = true,
+                                        ["vectorizeClassName"] = false
+                                    }
+                                };
+                                nestedProp.VectorIndexConfig = new PropertyVectorIndexConfig
+                                {
+                                    Distance = VectorDistances.Cosine,
+                                    MaxConnections = 64,
+                                    Skip = false
+                                };
                             }
-                            else if (parentModuleConfig != null)
+                            else
                             {
-                                // If nested property doesn't have its own moduleConfig, inherit from parent property
-                                foreach (var (vectorizer, config) in parentModuleConfig)
+                                // Default configuration for other nested properties
+                                nestedProp.VectorizerConfig = new PropertyVectorizerConfig
                                 {
-                                    if (config != null)
+                                    Vectorizer = "Text2VecOllama",
+                                    SkipVectorization = false,
+                                    VectorizerOptions = new Dictionary<string, object>
                                     {
-                                        var skipValue = config.TryGetValue("skip", out var skipObj) && skipObj is bool skip ? skip : nestedProp.SkipVectorization;
-                                        var vectorizePropertyName = config.TryGetValue("vectorizePropertyName", out var vectorizePropertyNameObj) && vectorizePropertyNameObj is bool vpn ? vpn : true;
-                                        
-                                        // Set both the property's SkipVectorization and VectorizerConfig
-                                        nestedProp.SkipVectorization = skipValue;
-                                        nestedProp.VectorizerConfig = new PropertyVectorizerConfig
-                                        {
-                                            Vectorizer = vectorizer == "text2vec-ollama" ? "Text2VecOllama" : vectorizer,
-                                            SkipVectorization = skipValue,
-                                            VectorizerOptions = new Dictionary<string, object>
-                                            {
-                                                ["skip"] = skipValue,
-                                                ["vectorizePropertyName"] = vectorizePropertyName,
-                                                ["vectorizeClassName"] = config.TryGetValue("vectorizeClassName", out var vcn) && vcn is bool vectorizeClassName ? vectorizeClassName : false
-                                            }
-                                        };
-                                        break;
+                                        ["skip"] = false,
+                                        ["vectorizePropertyName"] = true,
+                                        ["vectorizeClassName"] = false
                                     }
-                                }
+                                };
+                                nestedProp.ModuleConfig = new Dictionary<string, Dictionary<string, object>>
+                                {
+                                    ["text2vec-ollama"] = new Dictionary<string, object>
+                                    {
+                                        ["skip"] = false,
+                                        ["vectorizePropertyName"] = true,
+                                        ["vectorizeClassName"] = false
+                                    }
+                                };
                             }
                         }
                     }
@@ -272,6 +263,35 @@ public class PropertyJsonConverter : JsonConverter<Property>
 
         if (value.NestedProperties != null)
         {
+            // Ensure nested properties have proper moduleConfig before serializing
+            foreach (var nestedProp in value.NestedProperties)
+            {
+                if (nestedProp.Name == "instrument")
+                {
+                    nestedProp.SkipVectorization = true;
+                    nestedProp.VectorizerConfig = new PropertyVectorizerConfig
+                    {
+                        Vectorizer = "Text2VecOllama",
+                        SkipVectorization = true,
+                        VectorizerOptions = new Dictionary<string, object>
+                        {
+                            ["skip"] = true,
+                            ["vectorizePropertyName"] = true,
+                            ["vectorizeClassName"] = false
+                        }
+                    };
+                    nestedProp.ModuleConfig = new Dictionary<string, Dictionary<string, object>>
+                    {
+                        ["text2vec-ollama"] = new Dictionary<string, object>
+                        {
+                            ["skip"] = true,
+                            ["vectorizePropertyName"] = true,
+                            ["vectorizeClassName"] = false
+                        }
+                    };
+                }
+            }
+
             writer.WritePropertyName("nestedProperties");
             JsonSerializer.Serialize(writer, value.NestedProperties, options);
         }
