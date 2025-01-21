@@ -23,15 +23,50 @@ public class Property
     [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
 
+    private string[]? _dataType;
+
     [JsonPropertyName("dataType")]
-    public string[]? DataType { get; set; }
+    public string[]? DataType 
+    { 
+        get => _dataType;
+        set
+        {
+            _dataType = value;
+            // Update tokenization when data type changes
+            if (value != null && 
+                value.Any(dt => dt == "text" || dt == "string" || 
+                               dt == "text[]" || dt == "string[]"))
+            {
+                Tokenization = Tokenization.Word;
+            }
+        }
+    }
 
     [JsonPropertyName("description")]
     public string? Description { get; set; }
 
+    private Tokenization _tokenization = Tokenization.Word;
+
     [JsonPropertyName("tokenization")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public Tokenization? Tokenization { get; set; }
+    public Tokenization Tokenization 
+    { 
+        get => _tokenization;
+        set
+        {
+            // Set Word tokenization by default for text/string types
+            if (DataType != null && 
+                DataType.Any(dt => dt == "text" || dt == "string" || 
+                                 dt == "text[]" || dt == "string[]"))
+            {
+                _tokenization = Tokenization.Word;
+            }
+            else
+            {
+                _tokenization = value;
+            }
+        }
+    }
     
     // v4 API additions
     [JsonPropertyName("indexFilterable")]

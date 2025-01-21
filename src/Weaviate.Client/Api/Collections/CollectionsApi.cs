@@ -130,7 +130,7 @@ public class CollectionsApi
     /// <param name="request">The request containing the collection name and property configuration.</param>
     /// <returns>The created property configuration.</returns>
     public ApiResponse<Property> CreateProperty(CreatePropertyRequest request)
-	    => _transport.PostAsync<Property, Property>($"/v1/collections/{request.CollectionName}/properties", request.Property ?? throw new ArgumentNullException(nameof(request.Property))).GetAwaiter().GetResult();
+	    => _transport.PostAsync<Property, Property>($"/v1/schema/{request.CollectionName}/properties", request.Property ?? throw new ArgumentNullException(nameof(request.Property))).GetAwaiter().GetResult();
 
     /// <summary>
     /// Creates a new property in a collection asynchronously.
@@ -139,7 +139,7 @@ public class CollectionsApi
     /// <param name="cancellationToken">Optional token to cancel the operation.</param>
     /// <returns>The created property configuration.</returns>
     public async Task<ApiResponse<Property>> CreatePropertyAsync(CreatePropertyRequest request, CancellationToken cancellationToken = default)
-	    => await _transport.PostAsync<Property, Property>($"/v1/collections/{request.CollectionName}/properties", request.Property ?? throw new ArgumentNullException(nameof(request.Property)), cancellationToken).ConfigureAwait(false);
+	    => await _transport.PostAsync<Property, Property>($"/v1/schema/{request.CollectionName}/properties", request.Property ?? throw new ArgumentNullException(nameof(request.Property)), cancellationToken).ConfigureAwait(false);
 
     public void UpdateShards(UpdateShardsRequest request)
     {
