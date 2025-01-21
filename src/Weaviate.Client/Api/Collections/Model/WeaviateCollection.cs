@@ -81,34 +81,7 @@ public class WeaviateCollection
     /// </summary>
     [JsonPropertyName("vectorizerConfig")]
     [JsonIgnore]
-    public Dictionary<string, object>? VectorizerConfig
-    {
-        get => !string.IsNullOrEmpty(Vectorizer) ? ModuleConfig?[VectorizerExtensions.FromWeaviateString(Vectorizer).ToWeaviateString()] : ModuleConfig?["text2vec-ollama"];
-        set
-        {
-            if (value != null && !string.IsNullOrEmpty(Vectorizer))
-            {
-                var config = new Dictionary<string, object>
-                {
-                    ["skip"] = false,
-                    ["vectorizePropertyName"] = true,
-                    ["vectorizeClassName"] = true
-                };
-
-                // Copy over model and apiEndpoint if provided
-                if (value.TryGetValue("model", out var model))
-                    config["model"] = model?.ToString()?.EndsWith(":latest") == true ? model : $"{model}:latest";
-                if (value.TryGetValue("apiEndpoint", out var endpoint))
-                    config["apiEndpoint"] = (endpoint?.ToString() ?? "http://host.docker.internal:11434").Replace("localhost", "host.docker.internal");
-
-                var vectorizerName = !string.IsNullOrEmpty(Vectorizer) ? VectorizerExtensions.FromWeaviateString(Vectorizer).ToWeaviateString() : "text2vec-ollama";
-                ModuleConfig = new Dictionary<string, Dictionary<string, object>>
-                {
-                    [vectorizerName] = config
-                };
-            }
-        }
-    }
+    public Dictionary<string, object>? VectorizerConfig { get; set; }
 
     /// <summary>
     /// Configuration for replication.

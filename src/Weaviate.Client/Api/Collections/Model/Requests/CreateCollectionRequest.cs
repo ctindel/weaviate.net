@@ -25,6 +25,8 @@ public class CreateCollectionRequest : WeaviateCollection
     public CreateCollectionRequest(string name)
     {
         Name = name;
+        VectorIndexType = VectorIndexType.HNSW;
+        Vectorizer = "text2vec-ollama";
     }
 
     [Obsolete("Use Name property instead. This property will be removed in v5.")]
@@ -35,6 +37,7 @@ public class CreateCollectionRequest : WeaviateCollection
         set => Name = value;
     }
 
+    [JsonIgnore]
     public new Dictionary<string, object>? VectorizerConfig
     {
         get => base.VectorizerConfig;
@@ -42,18 +45,12 @@ public class CreateCollectionRequest : WeaviateCollection
         {
             if (value != null)
             {
-                var moduleConfigDict = new Dictionary<string, object>();
-
-                // Copy over model and apiEndpoint if provided
-                if (value.TryGetValue("model", out var model))
-                    moduleConfigDict["model"] = model?.ToString()?.EndsWith(":latest") == true ? model : $"{model}:latest";
-                if (value.TryGetValue("apiEndpoint", out var endpoint))
-                    moduleConfigDict["apiEndpoint"] = (endpoint?.ToString() ?? "http://host.docker.internal:11434").Replace("localhost", "host.docker.internal");
-
-                // Always set these fields to match Python client behavior
-                moduleConfigDict["skip"] = value.TryGetValue("skip", out var skip) ? skip : false;
-                moduleConfigDict["vectorizePropertyName"] = value.TryGetValue("vectorizePropertyName", out var vectorizePropertyName) ? vectorizePropertyName : true;
-                moduleConfigDict["vectorizeClassName"] = value.TryGetValue("vectorizeClassName", out var vectorizeClassName) ? vectorizeClassName : true;
+                var moduleConfigDict = new Dictionary<string, object>
+                {
+                    ["model"] = value.TryGetValue("model", out var model) ? model?.ToString()?.EndsWith(":latest") == true ? model : $"{model}:latest" : "mxbai-embed-large:latest",
+                    ["apiEndpoint"] = value.TryGetValue("apiEndpoint", out var endpoint) ? (endpoint?.ToString() ?? "http://host.docker.internal:11434").Replace("localhost", "host.docker.internal") : "http://host.docker.internal:11434",
+                    ["vectorizeClassName"] = value.TryGetValue("vectorizeClassName", out var vectorizeClassName) ? vectorizeClassName : true
+                };
 
                 ModuleConfig = new Dictionary<string, Dictionary<string, object>>
                 {
