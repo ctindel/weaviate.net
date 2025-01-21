@@ -1,6 +1,8 @@
 version: '3.4'
 services:
   weaviate:
+    container_name: "weaviate"
+    restart: always
     image: semitechnologies/weaviate:1.28.2
     ports:
       - "8080:8080"
@@ -16,6 +18,9 @@ services:
       LOG_LEVEL: 'debug'
     volumes:
       - weaviate_data:/var/lib/weaviate
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
   weaviate_data:
+    name: "weaviate_data"

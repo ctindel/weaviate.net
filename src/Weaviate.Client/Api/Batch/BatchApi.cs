@@ -13,16 +13,75 @@ public class BatchApi
 
     public ApiResponse<BatchResponse<WeaviateObjectResponse>> CreateObjects(CreateObjectsBatchRequest request)
     {
-        // Ensure Class is set for backward compatibility
+        _transport.DebugLoggingEnabled = true;  // Enable debug logging temporarily
+
+        // Debug log each object in the batch
+        Console.WriteLine("[DEBUG] Batch request objects:");
         foreach (var obj in request.Objects)
         {
-            #pragma warning disable CS0618 // Type or member is obsolete
-            obj.Class = obj.Collection;
-            #pragma warning restore CS0618
+            // Always ensure moduleConfig is properly set up
+            if (obj.ModuleConfig == null)
+            {
+                obj.ModuleConfig = new Dictionary<string, Dictionary<string, object>>
+                {
+                    ["text2vec-ollama"] = new Dictionary<string, object>
+                    {
+                        { "model", "mxbai-embed-large" },
+                        { "apiEndpoint", "http://host.docker.internal:11434" },
+                        { "skip", false },
+                        { "vectorizePropertyName", true },
+                        { "vectorizeClassName", false }
+                    }
+                };
+            }
+
+            var options = new System.Text.Json.JsonSerializerOptions
+            {
+                WriteIndented = true,
+                PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+                Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter(System.Text.Json.JsonNamingPolicy.CamelCase) }
+            };
+
+            Console.WriteLine($"[DEBUG] Object ID: {obj.Id}");
+            Console.WriteLine($"[DEBUG] Collection: {obj.Collection}");
+            Console.WriteLine($"[DEBUG] ModuleConfig: {System.Text.Json.JsonSerializer.Serialize(obj.ModuleConfig, options)}");
+            Console.WriteLine($"[DEBUG] Properties: {System.Text.Json.JsonSerializer.Serialize(obj.Properties, options)}");
+            Console.WriteLine($"[DEBUG] Full object: {System.Text.Json.JsonSerializer.Serialize(obj, options)}");
+            Console.WriteLine("---");
         }
+        Console.Out.Flush();
 
         var response = _transport.Post<BatchResponse<WeaviateObjectResponse>, CreateObjectsBatchRequest>("/v1/batch/objects", request);
-        
+
+        // Log the response details
+        if (response.Result != null)
+        {
+            Console.WriteLine($"[DEBUG] Batch creation response - Successful: {response.Result.Successful}");
+            if (response.Result.Objects != null)
+            {
+                var failedObjects = response.Result.Objects.Where(o => o.Errors != null && o.Errors.Any()).ToList();
+                if (failedObjects.Any())
+                {
+                    Console.WriteLine($"[DEBUG] Failed objects count: {failedObjects.Count}");
+                    foreach (var failure in failedObjects)
+                    {
+                        Console.WriteLine($"[DEBUG] Failed object - ID: {failure.Id}, Error: {string.Join(", ", failure.Errors ?? Array.Empty<string>())}");
+                    }
+                }
+            }
+        }
+        if (response.Error != null && response.Error.Error != null)
+        {
+            foreach (var error in response.Error.Error)
+            {
+                Console.WriteLine($"[DEBUG] Error: {error.Message}");
+            }
+        }
+        Console.Out.Flush();
+
+        _transport.DebugLoggingEnabled = false;  // Disable debug logging
+
         return response;
     }
 
@@ -35,8 +94,8 @@ public class BatchApi
         if (string.IsNullOrEmpty(toId)) throw new ArgumentNullException(nameof(toId));
 
         return new BatchReference(
-            $"weaviate://localhost/{fromCollection}/{fromId}/{referenceProperty}",
-            $"weaviate://localhost/{toCollection}/{toId}");
+            $"weaviate://host.docker.internal/{fromCollection}/{fromId}/{referenceProperty}",
+            $"weaviate://host.docker.internal/{toCollection}/{toId}");
     }
 
     public ApiResponse<BatchResponse<WeaviateObjectResponse>> CreateReferences(CreateReferencesRequest request)

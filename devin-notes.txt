@@ -133,7 +133,7 @@ Important: When creating collections with text2vec-ollama vectorizer, the config
   },
   "vectorizerConfig": {
     "model": "mxbai-embed-large",
-    "api_endpoint": "http://host.docker.internal:11434"
+    "apiEndpoint": "http://host.docker.internal:11434"
   }
 }
 ```

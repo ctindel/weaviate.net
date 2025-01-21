@@ -25,16 +25,21 @@ public class CollectionTests : TestBase
 	public void CreateBandCollection()
 	{
 		Client.Collections.DeleteAllCollections();
-
 		var createStatus = Client.Collections.CreateCollection(new CreateCollectionRequest("Band")
 		{
 			Description = "Band that plays and produces music",
-			VectorIndexType = VectorIndexType.HNSW.ToString(),
+			VectorIndexType = VectorIndexType.HNSW,
 			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString(),
-			VectorizerConfig = new Dictionary<string, object>
+			ModuleConfig = new Dictionary<string, Dictionary<string, object>>
 			{
-				{ "model", "mxbai-embed-large" },
-				{ "api_endpoint", "http://host.docker.internal:11434" }
+				["text2vec-ollama"] = new Dictionary<string, object>
+				{
+					{ "model", "mxbai-embed-large:latest" },
+					{ "apiEndpoint", "http://host.docker.internal:11434" },
+					{ "skip", false },
+					{ "vectorizePropertyName", true },
+					{ "vectorizeClassName", true }
+				}
 			},
 			Properties = new Property[]
 			{
@@ -44,7 +49,15 @@ public class CollectionTests : TestBase
 					Description = "Name of the band",
 					DataType = new[] { DataType.Text },
 					IndexFilterable = true,
-					IndexSearchable = true
+					IndexSearchable = true,
+					ModuleConfig = new Dictionary<string, Dictionary<string, object>>
+					{
+						["text2vec-ollama"] = new Dictionary<string, object>
+						{
+							{ "skip", false },
+							{ "vectorizePropertyName", true }
+						}
+					}
 				},
 				new()
 				{
@@ -53,6 +66,14 @@ public class CollectionTests : TestBase
 					DataType = new[] { DataType.Object },
 					IndexFilterable = true,
 					IndexSearchable = false,
+					ModuleConfig = new Dictionary<string, Dictionary<string, object>>
+					{
+						["text2vec-ollama"] = new Dictionary<string, object>
+						{
+							{ "skip", false },
+							{ "vectorizePropertyName", true }
+						}
+					},
 					NestedProperties = new[]
 					{
 						new Property
@@ -61,7 +82,15 @@ public class CollectionTests : TestBase
 							Description = "Name of the band member",
 							DataType = new[] { DataType.Text },
 							IndexFilterable = true,
-							IndexSearchable = false
+							IndexSearchable = false,
+							ModuleConfig = new Dictionary<string, Dictionary<string, object>>
+							{
+								["text2vec-ollama"] = new Dictionary<string, object>
+								{
+									{ "skip", false },
+									{ "vectorizePropertyName", true }
+								}
+							}
 						},
 						new Property
 						{
@@ -70,16 +99,13 @@ public class CollectionTests : TestBase
 							DataType = new[] { DataType.Text },
 							IndexFilterable = true,
 							IndexSearchable = false,
-							VectorizerConfig = new PropertyVectorizerConfig
+							ModuleConfig = new Dictionary<string, Dictionary<string, object>>
 							{
-								SkipVectorization = true,
-								Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString()
-							},
-							VectorIndexConfig = new PropertyVectorIndexConfig
-							{
-								Distance = VectorDistance.Cosine.ToString(),
-								MaxConnections = 64,
-								Skip = false
+								["text2vec-ollama"] = new Dictionary<string, object>
+								{
+									{ "skip", false },
+									{ "vectorizePropertyName", true }
+								}
 							}
 						}
 					}
@@ -145,7 +171,7 @@ public class CollectionTests : TestBase
 		var createStatus = Client.Collections.CreateCollection(new CreateCollectionRequest("Run")
 		{
 			Description = "Running from the fuzz",
-			VectorIndexType = VectorIndexType.HNSW.ToString(),
+			VectorIndexType = VectorIndexType.HNSW,
 			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString()
 		});
 		Assert.Equal(HttpStatusCode.OK, createStatus.HttpStatusCode);
@@ -249,12 +275,18 @@ public class CollectionTests : TestBase
 		var createStatus = Client.Collections.CreateCollection(new CreateCollectionRequest("Article")
 		{
 			Description = "A written text, for example a news article or blog post",
-			VectorIndexType = VectorIndexType.HNSW.ToString(),
+			VectorIndexType = VectorIndexType.HNSW,
 			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString(),
-			VectorizerConfig = new Dictionary<string, object>
+			ModuleConfig = new Dictionary<string, Dictionary<string, object>>
 			{
-				{ "model", "mxbai-embed-large" },
-				{ "api_endpoint", "http://host.docker.internal:11434" }
+				["text2vec-ollama"] = new Dictionary<string, object>
+				{
+					{ "model", "mxbai-embed-large:latest" },
+					{ "apiEndpoint", "http://host.docker.internal:11434" },
+					{ "skip", false },
+					{ "vectorizePropertyName", true },
+					{ "vectorizeClassName", true }
+				}
 			},
 			Properties = new Property[]
 			{
@@ -306,12 +338,12 @@ public class CollectionTests : TestBase
 		var createStatus = Client.Collections.CreateCollection(new CreateCollectionRequest("CollectionArrays")
 		{
 			Description = "Collection which properties are all array properties",
-			VectorIndexType = VectorIndexType.HNSW.ToString(),
+			VectorIndexType = VectorIndexType.HNSW,
 			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString(),
 			VectorizerConfig = new Dictionary<string, object>
 			{
 				{ "model", "mxbai-embed-large" },
-				{ "api_endpoint", "http://host.docker.internal:11434" }
+				{ "apiEndpoint", "http://host.docker.internal:11434" }
 			},
 			Properties = new Property[]
 			{
@@ -417,12 +449,12 @@ public class CollectionTests : TestBase
 		var createStatus = Client.Collections.CreateCollection(new CreateCollectionRequest("Band")
 		{
 			Description = "Band that plays and produces music",
-			VectorIndexType = VectorIndexType.HNSW.ToString(),
+			VectorIndexType = VectorIndexType.HNSW,
 			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString(),
 			VectorizerConfig = new Dictionary<string, object>
 			{
 				{ "model", "mxbai-embed-large" },
-				{ "api_endpoint", "http://host.docker.internal:11434" }
+				{ "apiEndpoint", "http://host.docker.internal:11434" }
 			},
 			InvertedIndexConfig = new()
 			{
@@ -464,12 +496,12 @@ public class CollectionTests : TestBase
 		var createStatus = Client.Collections.CreateCollection(new CreateCollectionRequest("Band")
 		{
 			Description = "Band that plays and produces music",
-			VectorIndexType = VectorIndexType.HNSW.ToString(),
+			VectorIndexType = VectorIndexType.HNSW,
 			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString(),
 			VectorizerConfig = new Dictionary<string, object>
 			{
 				{ "model", "mxbai-embed-large" },
-				{ "api_endpoint", "http://host.docker.internal:11434" }
+				{ "apiEndpoint", "http://host.docker.internal:11434" }
 			},
 			InvertedIndexConfig =  new()
 				{
@@ -506,12 +538,12 @@ public class CollectionTests : TestBase
 		var createStatus = Client.Collections.CreateCollection(new CreateCollectionRequest("Band")
 		{
 			Description = "Band that plays and produces music",
-			VectorIndexType = VectorIndexType.HNSW.ToString(),
+			VectorIndexType = VectorIndexType.HNSW,
 			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString(),
 			VectorizerConfig = new Dictionary<string, object>
 			{
 				{ "model", "mxbai-embed-large" },
-				{ "api_endpoint", "http://host.docker.internal:11434" }
+				{ "apiEndpoint", "http://host.docker.internal:11434" }
 			},
 			InvertedIndexConfig = new()
 			{
@@ -553,12 +585,12 @@ public class CollectionTests : TestBase
 		var createStatus = Client.Collections.CreateCollection(new CreateCollectionRequest("Band")
 		{
 			Description = "Band that plays and produces music",
-			VectorIndexType = VectorIndexType.HNSW.ToString(),
+			VectorIndexType = VectorIndexType.HNSW,
 			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString(),
 			VectorizerConfig = new Dictionary<string, object>
 			{
 				{ "model", "mxbai-embed-large" },
-				{ "api_endpoint", "http://host.docker.internal:11434" }
+				{ "apiEndpoint", "http://host.docker.internal:11434" }
 			}
 		});
 		Assert.Equal(HttpStatusCode.OK, createStatus.HttpStatusCode);
@@ -580,12 +612,12 @@ public class CollectionTests : TestBase
 		var createStatus = Client.Collections.CreateCollection(new CreateCollectionRequest("Band")
 		{
 			Description = "Band that plays and produces music",
-			VectorIndexType = VectorIndexType.HNSW.ToString(),
+			VectorIndexType = VectorIndexType.HNSW,
 			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString(),
 			VectorizerConfig = new Dictionary<string, object>
 			{
 				{ "model", "mxbai-embed-large" },
-				{ "api_endpoint", "http://host.docker.internal:11434" }
+				{ "apiEndpoint", "http://host.docker.internal:11434" }
 			}
 		});
 		Assert.Equal(HttpStatusCode.OK, createStatus.HttpStatusCode);
@@ -618,12 +650,12 @@ public class CollectionTests : TestBase
 		var createStatus = Client.Collections.CreateCollection(new CreateCollectionRequest("Band")
 		{
 			Description = "Band that plays and produces music",
-			VectorIndexType = VectorIndexType.HNSW.ToString(),
+			VectorIndexType = VectorIndexType.HNSW,
 			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString(),
 			VectorizerConfig = new Dictionary<string, object>
 			{
 				{ "model", "mxbai-embed-large" },
-				{ "api_endpoint", "http://host.docker.internal:11434" }
+				{ "apiEndpoint", "http://host.docker.internal:11434" }
 			},
 			ShardingConfig = new()
 			{
@@ -670,12 +702,12 @@ public class CollectionTests : TestBase
 		var createStatus = Client.Collections.CreateCollection(new CreateCollectionRequest("Band")
 		{
 			Description = "Band that plays and produces music",
-			VectorIndexType = VectorIndexType.HNSW.ToString(),
+			VectorIndexType = VectorIndexType.HNSW,
 			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString(),
 			VectorizerConfig = new Dictionary<string, object>
 			{
 				{ "model", "mxbai-embed-large" },
-				{ "api_endpoint", "http://host.docker.internal:11434" }
+				{ "apiEndpoint", "http://host.docker.internal:11434" }
 			},
 			ReplicationConfig = new()
 			{
@@ -705,12 +737,12 @@ public class CollectionTests : TestBase
 		var createStatus = Client.Collections.CreateCollection(new CreateCollectionRequest("Band")
 		{
 			Description = "Band that plays and produces music",
-			VectorIndexType = VectorIndexType.HNSW.ToString(),
+			VectorIndexType = VectorIndexType.HNSW,
 			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString(),
 			VectorizerConfig = new Dictionary<string, object>
 			{
 				{ "model", "mxbai-embed-large" },
-				{ "api_endpoint", "http://host.docker.internal:11434" }
+				{ "apiEndpoint", "http://host.docker.internal:11434" }
 			},
 			ReplicationConfig = new()
 		});
@@ -737,12 +769,12 @@ public class CollectionTests : TestBase
 		var createStatus = Client.Collections.CreateCollection(new CreateCollectionRequest("Band")
 		{
 			Description = "Band that plays and produces music",
-			VectorIndexType = VectorIndexType.HNSW.ToString(),
+			VectorIndexType = VectorIndexType.HNSW,
 			Vectorizer = Vectorizer.Text2VecOllama.ToWeaviateString(),
 			VectorizerConfig = new Dictionary<string, object>
 			{
 				{ "model", "mxbai-embed-large" },
-				{ "api_endpoint", "http://host.docker.internal:11434" }
+				{ "apiEndpoint", "http://host.docker.internal:11434" }
 			},
 			InvertedIndexConfig =
 				new()

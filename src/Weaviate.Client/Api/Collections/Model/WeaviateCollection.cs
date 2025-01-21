@@ -23,6 +23,24 @@ namespace Weaviate.Client;
 public class WeaviateCollection
 {
     /// <summary>
+    /// The vectorizer to use.
+    /// </summary>
+    [JsonPropertyName("vectorizer")]
+    public string Vectorizer { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Module-specific configuration.
+    /// </summary>
+    [JsonPropertyName("moduleConfig")]
+    public Dictionary<string, Dictionary<string, object>>? ModuleConfig { get; set; }
+
+    /// <summary>
+    /// The type of vector index to use.
+    /// </summary>
+    [JsonPropertyName("vectorIndexType")]
+    public VectorIndexType VectorIndexType { get; set; } = VectorIndexType.HNSW;
+
+    /// <summary>
     /// The name of the collection.
     /// </summary>
     [JsonPropertyName("class")]
@@ -35,22 +53,16 @@ public class WeaviateCollection
     public string Description { get; set; } = string.Empty;
 
     /// <summary>
-    /// Configuration for the inverted index.
-    /// </summary>
-    [JsonPropertyName("invertedIndexConfig")]
-    public InvertedIndexConfig? InvertedIndexConfig { get; set; }
-
-    /// <summary>
-    /// Module-specific configuration.
-    /// </summary>
-    [JsonPropertyName("moduleConfig")]
-    public object? ModuleConfig { get; set; }
-
-    /// <summary>
     /// Properties defined in the collection.
     /// </summary>
     [JsonPropertyName("properties")]
     public Property[]? Properties { get; set; }
+
+    /// <summary>
+    /// Configuration for the inverted index.
+    /// </summary>
+    [JsonPropertyName("invertedIndexConfig")]
+    public InvertedIndexConfig? InvertedIndexConfig { get; set; }
 
     /// <summary>
     /// Configuration for the vector index.
@@ -65,22 +77,38 @@ public class WeaviateCollection
     public ShardingConfig? ShardingConfig { get; set; }
 
     /// <summary>
-    /// The type of vector index to use.
-    /// </summary>
-    [JsonPropertyName("vectorIndexType")]
-    public string VectorIndexType { get; set; } = string.Empty;
-
-    /// <summary>
-    /// The vectorizer to use.
-    /// </summary>
-    [JsonPropertyName("vectorizer")]
-    public string Vectorizer { get; set; } = string.Empty;
-
-    /// <summary>
     /// Configuration for the vectorizer.
     /// </summary>
     [JsonPropertyName("vectorizerConfig")]
-    public Dictionary<string, object>? VectorizerConfig { get; set; }
+    [JsonIgnore]
+    public Dictionary<string, object>? VectorizerConfig
+    {
+        get => !string.IsNullOrEmpty(Vectorizer) ? ModuleConfig?[VectorizerExtensions.FromWeaviateString(Vectorizer).ToWeaviateString()] : ModuleConfig?["text2vec-ollama"];
+        set
+        {
+            if (value != null && !string.IsNullOrEmpty(Vectorizer))
+            {
+                var config = new Dictionary<string, object>
+                {
+                    ["skip"] = false,
+                    ["vectorizePropertyName"] = true,
+                    ["vectorizeClassName"] = true
+                };
+
+                // Copy over model and apiEndpoint if provided
+                if (value.TryGetValue("model", out var model))
+                    config["model"] = model?.ToString()?.EndsWith(":latest") == true ? model : $"{model}:latest";
+                if (value.TryGetValue("apiEndpoint", out var endpoint))
+                    config["apiEndpoint"] = (endpoint?.ToString() ?? "http://host.docker.internal:11434").Replace("localhost", "host.docker.internal");
+
+                var vectorizerName = !string.IsNullOrEmpty(Vectorizer) ? VectorizerExtensions.FromWeaviateString(Vectorizer).ToWeaviateString() : "text2vec-ollama";
+                ModuleConfig = new Dictionary<string, Dictionary<string, object>>
+                {
+                    [vectorizerName] = config
+                };
+            }
+        }
+    }
 
     /// <summary>
     /// Configuration for replication.
@@ -98,6 +126,7 @@ public class WeaviateCollection
     /// For backward compatibility with v3 API.
     /// </summary>
     [Obsolete("Use Name property instead. This property will be removed in v5.")]
+    [JsonIgnore]
     public string Class
     {
         get => Name;
